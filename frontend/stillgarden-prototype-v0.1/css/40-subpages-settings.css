@@ -1,0 +1,316 @@
+.subpage-panel {
+  display: none;
+}
+
+.more-card > .subpage-panel,
+.archive-card > .subpage-panel,
+.room-card > .subpage-panel {
+  display: none;
+}
+
+.phone-card.subpage-open {
+  overflow: hidden;
+}
+
+.phone-card.subpage-open > :not(.active-subpage):not(.subpage-appbar) {
+  display: none;
+}
+
+.phone-card.subpage-open > .subpage-menu,
+.phone-card.subpage-open > .phone-topline {
+  display: none !important;
+}
+
+.subpage-panel.active-subpage {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: block;
+  margin: 0;
+  padding: 82px 18px 22px;
+  overflow: hidden auto;
+  border: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 246, 250, 0.76)),
+    var(--paper);
+  box-shadow: none;
+  scrollbar-width: none;
+}
+
+.more-card > .subpage-panel.active-subpage,
+.archive-card > .subpage-panel.active-subpage,
+.room-card > .subpage-panel.active-subpage {
+  display: block;
+}
+
+.subpage-panel.active-subpage.fold-card {
+  padding-bottom: 22px;
+}
+
+.subpage-panel.active-subpage:not(.fold-card) {
+  padding-top: 82px;
+}
+
+.subpage-panel.active-subpage > summary {
+  display: none !important;
+}
+
+.subpage-panel.active-subpage > summary::after {
+  display: none !important;
+  content: none;
+}
+
+.subpage-appbar {
+  position: absolute;
+  z-index: 7;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: none;
+  min-height: 66px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(182, 117, 145, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.subpage-back {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  padding: 0;
+  color: #8a5870;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.subpage-back svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
+.subpage-title {
+  min-width: 0;
+  color: #7b415c;
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moment-subpage-appbar {
+  border-bottom: 0;
+  background: linear-gradient(180deg, rgba(125, 75, 98, 0.18), rgba(255, 255, 255, 0));
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+.moment-subpage-appbar .subpage-back {
+  color: #fff;
+  background: rgba(110, 65, 88, 0.18);
+  box-shadow: 0 10px 26px rgba(127, 73, 101, 0.12);
+  backdrop-filter: blur(14px);
+  pointer-events: auto;
+}
+
+.moment-subpage-appbar .subpage-title {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(88, 44, 68, 0.2);
+}
+
+.phone-card.subpage-open > .subpage-appbar {
+  display: flex;
+}
+
+.phone-shell.moment-compose-focus .phone-card.subpage-open > .subpage-appbar {
+  display: none;
+}
+
+#momentsPanel.subpage-panel.active-subpage {
+  padding: 0 0 22px;
+}
+
+#momentsPanel.subpage-panel.active-subpage > :not(summary) {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+#momentsPanel.subpage-panel.active-subpage.fold-card[open] > :not(summary) {
+  margin-top: 0;
+}
+
+.fold-card {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+.fold-card + .fold-card {
+  margin-top: 16px;
+}
+
+.more-card > .fold-card {
+  display: block;
+  margin-top: 16px;
+}
+
+.more-card > .phone-topline + .fold-card {
+  margin-top: 0;
+}
+
+.fold-card > summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.fold-card > summary::-webkit-details-marker {
+  display: none;
+}
+
+.fold-card > summary::after {
+  content: "展开";
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  padding: 5px 10px;
+  color: #8a5870;
+  border: 1px solid rgba(182, 117, 145, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.58);
+  font-size: 0.72rem;
+}
+
+.fold-card[open] > summary::after {
+  content: "收起";
+}
+
+.fold-card[open] > summary {
+  border-bottom: 1px solid rgba(182, 117, 145, 0.12);
+}
+
+.fold-card > summary span {
+  grid-column: 1;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.fold-card > summary strong {
+  grid-column: 1;
+  color: #7b415c;
+  font-family: var(--serif);
+  font-size: 1.04rem;
+  font-weight: 500;
+}
+
+.fold-card > :not(summary) {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.fold-card[open] > :not(summary) {
+  margin-top: 18px;
+}
+
+.fold-card[open] > p:first-of-type,
+.fold-card[open] > h3:first-of-type {
+  margin-top: 18px;
+}
+
+.fold-card > :last-child {
+  margin-bottom: 20px;
+}
+
+.api-config-card {
+  display: grid;
+  gap: 13px;
+  margin-top: 16px;
+}
+
+.api-config-card.fold-card {
+  display: block;
+  gap: 0;
+}
+
+.more-card > .fold-card.subpage-panel,
+.more-card > .api-config-card.fold-card.subpage-panel,
+.archive-card > .subpage-panel,
+.room-card > .subpage-panel {
+  display: none;
+}
+
+.more-card > .fold-card.subpage-panel.active-subpage,
+.more-card > .api-config-card.fold-card.subpage-panel.active-subpage,
+.archive-card > .subpage-panel.active-subpage,
+.room-card > .subpage-panel.active-subpage {
+  display: block;
+}
+
+.api-config-card.fold-card[open] > p,
+.api-config-card.fold-card[open] > .route-grid,
+.api-config-card.fold-card[open] > .config-field,
+.api-config-card.fold-card[open] > .provider-toolbar,
+.api-config-card.fold-card[open] > .provider-detail,
+.api-config-card.fold-card[open] > .config-lock,
+.api-config-card.fold-card[open] > .config-save,
+.api-config-card.fold-card[open] > .config-status {
+  margin-top: 18px;
+}
+
+.wake-controls,
+.wake-cardlet {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.wake-cardlet span,
+.wake-cardlet em,
+.wake-page-note,
+.wake-index {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.wake-index {
+  display: block;
+  margin-top: 5px;
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.1em;
+}
+
+.wake-cardlet strong {
+  display: block;
+  margin: 8px 0;
+  color: #7b415c;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.wake-cardlet p {
+  margin: 0;
+  color: #79636f;
+  line-height: 1.7;
+}
+
