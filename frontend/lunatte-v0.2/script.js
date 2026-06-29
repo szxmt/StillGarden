@@ -11,6 +11,10 @@ const {
   autoWakeOrder,
   momentAuthors,
   chatProfiles,
+  normalizeApiConfig,
+  normalizeUserProfile,
+  normalizeSelfAccess,
+  normalizeMomentsAutoComments,
   createBrowserStorage
 } = window.LunatteCore;
 
@@ -311,63 +315,6 @@ async function saveSelfAccessConfig() {
   }
 }
 
-function normalizeApiConfig(config = {}) {
-  const builtIns = config.providers || {};
-  const selfAccess = normalizeSelfAccess(config.self_access || defaultApiConfig.self_access);
-  const momentsAutoComments = normalizeMomentsAutoComments(config.moments_auto_comments || defaultApiConfig.moments_auto_comments);
-  const userProfile = normalizeUserProfile(config.user_profile || defaultApiConfig.user_profile);
-  return {
-    ...defaultApiConfig,
-    ...config,
-    room_labels: {
-      ...defaultApiConfig.room_labels,
-      ...(config.room_labels || {})
-    },
-    room_routes: {
-      ...defaultApiConfig.room_routes,
-      ...(config.room_routes || {})
-    },
-    providers: {
-      oa: {
-        ...defaultApiConfig.providers.oa,
-        ...(builtIns.oa || {})
-      },
-      gg: {
-        ...defaultApiConfig.providers.gg,
-        ...(builtIns.gg || {})
-      }
-    },
-    custom_providers: Array.isArray(config.custom_providers)
-      ? config.custom_providers.map((item, index) => ({
-          id: item.id || `custom-local-${index + 1}`,
-          name: item.name || `自定义${index + 1}`,
-          kind: "custom",
-          provider: "custom",
-          base_url: item.base_url || "",
-          model: item.model || "未设置",
-          key_alias: item.key_alias || "",
-          key_saved: Boolean(item.key_saved)
-        }))
-      : [],
-    agent_connectors: {
-      aimas: {
-        ...defaultApiConfig.agent_connectors.aimas,
-        ...(config.agent_connectors?.aimas || {})
-      }
-    },
-    self_access: selfAccess,
-    moments_auto_comments: momentsAutoComments,
-    user_profile: userProfile
-  };
-}
-
-function normalizeUserProfile(value = {}) {
-  const nickname = String(value.nickname || defaultApiConfig.user_profile.nickname || "小宝").trim().slice(0, 20);
-  return {
-    nickname: nickname || "小宝"
-  };
-}
-
 function myNickname() {
   return normalizeUserProfile(apiConfigCache?.user_profile || defaultApiConfig.user_profile).nickname;
 }
@@ -385,42 +332,6 @@ function refreshMyNicknameLabels() {
   if (currentMomentScope === "all" || currentMomentScope === "me") {
     updateMomentHero();
   }
-}
-
-function normalizeSelfAccess(value = {}) {
-  const incomingReaders = value.readers || {};
-  const readers = {
-    linxu: Boolean(incomingReaders.linxu),
-    dengdeng: Boolean(incomingReaders.dengdeng),
-    aimas: Boolean(incomingReaders.aimas)
-  };
-  const anyReader = Object.values(readers).some(Boolean);
-  return {
-    enabled: Boolean(value.enabled) && anyReader,
-    readers: anyReader ? readers : { linxu: false, dengdeng: false, aimas: false }
-  };
-}
-
-function normalizeMomentsAutoComments(value = {}) {
-  const incomingCommenters = value.commenters || {};
-  const commenters = {
-    linxu: Boolean(incomingCommenters.linxu),
-    dengdeng: Boolean(incomingCommenters.dengdeng),
-    aimas: Boolean(incomingCommenters.aimas)
-  };
-  const anyCommenter = Object.values(commenters).some(Boolean);
-  const cooldown = Number.parseInt(value.cooldown_minutes, 10);
-  const safeCooldown = Number.isFinite(cooldown) ? Math.min(1440, Math.max(15, cooldown)) : 120;
-  const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
-  const quietStart = timePattern.test(String(value.quiet_start || "")) ? value.quiet_start : "23:30";
-  const quietEnd = timePattern.test(String(value.quiet_end || "")) ? value.quiet_end : "09:00";
-  return {
-    enabled: Boolean(value.enabled) && anyCommenter,
-    commenters: anyCommenter ? commenters : { linxu: false, dengdeng: false, aimas: false },
-    cooldown_minutes: safeCooldown,
-    quiet_start: quietStart,
-    quiet_end: quietEnd
-  };
 }
 
 function selfAccessFromControls() {
