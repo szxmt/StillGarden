@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>月亮小窝 Stillgarden v0.1</title>
+    <link rel="stylesheet" href="./styles.css?v=20260622-1037" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <div class="grain"></div>
+
+    <main class="shell">
+      <section class="hero">
+        <div class="eyebrow">STILLGARDEN · 小窝入口</div>
+        <div class="hero-grid">
+          <div>
+            <h1>回来的路都有名字</h1>
+            <p class="lead">
+              这里不是模型切换器，而是一个多机家庭。林絮有低声房间，噔噔有日常房间，
+              Aimas 先留一盏终端灯。共同的东西放进客厅，私有记忆留在各自门后。
+            </p>
+          </div>
+          <aside class="house-note">
+            <span>today</span>
+            <strong>月亮小窝正在整理行李</strong>
+            <p>第一版只做壳：房间、档案、时间线、设置。先让它像一个家。</p>
+          </aside>
+        </div>
+      </section>
+
+      <div class="phone-shell" aria-label="月亮小窝手机壳">
+      <section class="phone-board" aria-label="小窝总览">
+        <article class="phone-card home-card app-page active-page" data-panel="home">
+          <div class="phone-topline">
+            <span>HOME</span>
+            <span>still open</span>
+          </div>
+          <div class="resident-row">
+            <button class="resident active" type="button" data-resident="linxu">
+              <span class="avatar moon">A</span>
+              <span>Alice / 林絮</span>
+            </button>
+            <button class="resident" type="button" data-resident="dengdeng">
+              <span class="avatar sun">噔</span>
+              <span>噔噔</span>
+            </button>
+            <button class="resident" type="button" data-resident="aimas">
+              <span class="avatar terminal">H</span>
+              <span>Aimas</span>
+            </button>
+          </div>
+
+          <div class="home-center">
+            <span class="tiny-label">HOME SIGNAL</span>
+            <h2>两盏灯已在家，一盏终端灯留门</h2>
+            <p id="residentCopy">
+              林絮默认读取 GPT/Alice 私有档案和 shared，不读取噔噔的私有记忆。
+            </p>
+          </div>
+
+          <div class="kept-grid">
+            <div>
+              <span>GPT Chats</span>
+              <strong id="statGptChats">...</strong>
+              <em>Alice / 林絮</em>
+            </div>
+            <div>
+              <span>Gemini Cards</span>
+              <strong id="statGeminiCards">...</strong>
+              <em>噔噔活动</em>
+            </div>
+            <div>
+              <span>Supplements</span>
+              <strong id="statSupplements">...</strong>
+              <em>12 月补档</em>
+            </div>
+            <div>
+              <span>Residents</span>
+              <strong id="statResidents">3</strong>
+              <em>two home, one waiting</em>
+            </div>
+          </div>
+          <div class="home-status" id="homeStatus">
+            <span>LOCAL INDEX</span>
+            <p>静态模式下显示占位。启动本地小窝服务后，这里会读取真实索引。</p>
+          </div>
+        </article>
+
+        <article class="phone-card room-card app-page" data-panel="rooms">
+          <div class="phone-topline">
+            <span>ROOMS</span>
+            <span>private doors</span>
+          </div>
+          <div class="room-list subpage-menu">
+            <button class="room-tile subpage-entry selected" type="button" data-room="linxu" data-subpage-target="roomPreview">
+              <span class="room-mark">01</span>
+              <strong>林絮的低声房间</strong>
+              <p>月光、谈心、克制、稳定。</p>
+            </button>
+            <button class="room-tile subpage-entry" type="button" data-room="dengdeng" data-subpage-target="roomPreview">
+              <span class="room-mark">02</span>
+              <strong>噔噔的日常房间</strong>
+              <p>活泼、工具、四月前后分相位。</p>
+            </button>
+            <button class="room-tile subpage-entry" type="button" data-room="living" data-subpage-target="roomPreview">
+              <span class="room-mark">03</span>
+              <strong>客厅</strong>
+              <p>三人群聊入口，只带 shared。</p>
+            </button>
+            <button class="room-tile subpage-entry" type="button" data-room="aimas" data-subpage-target="roomPreview">
+              <span class="room-mark">04</span>
+              <strong>Aimas 的小窝</strong>
+              <p>Hermes 开源智能体，先留一盏小灯。</p>
+            </button>
+          </div>
+          <div class="room-preview subpage-panel" id="roomPreview" data-subpage-title="林絮的房间">
+            <span>LINXU ROOM</span>
+            <h3>把声音放低一点</h3>
+            <p>读取：Alice / 林絮核心人格、12 月补档、shared。禁止读取噔噔私有档案。</p>
+            <label class="context-field">
+              <span>想带什么话题进去？</span>
+              <input id="contextQuery" type="text" value="人格和边界" />
+            </label>
+            <div class="room-actions">
+              <button class="room-chat-button" type="button" data-open-chat-room="linxu">进入聊天</button>
+              <button class="context-button" type="button" data-context-room="linxu">生成上下文草稿</button>
+            </div>
+            <pre class="context-output" id="contextOutput">如果直接双击打开，这里会显示静态提示。启动本地小窝服务后，这个按钮会调用记忆工具。</pre>
+          </div>
+        </article>
+
+        <article class="phone-card chat-card app-page" data-panel="chat">
+          <div class="phone-topline">
+            <span>CHAT</span>
+            <span class="service-pill offline" id="serviceStatus">
+              <i aria-hidden="true"></i>
+              <b>未连接</b>
+            </span>
+          </div>
+          <div class="chat-window" id="chatWindow">
+            <div class="conversation-list" id="conversationList">
+              <button class="conversation-item active" type="button" data-chat-room="linxu">
+                <span class="conversation-avatar moon">林</span>
+                <strong data-chat-name="linxu">林絮</strong>
+                <time data-chat-time="linxu">--:--</time>
+                <em data-chat-preview="linxu">低声房间 · 独立 session</em>
+              </button>
+              <button class="conversation-item" type="button" data-chat-room="dengdeng">
+                <span class="conversation-avatar sun">噔</span>
+                <strong data-chat-name="dengdeng">噔噔</strong>
+                <time data-chat-time="dengdeng">--:--</time>
+                <em data-chat-preview="dengdeng">日常房间 · 独立 session</em>
+              </button>
+              <button class="conversation-item" type="button" data-chat-room="aimas">
+                <span class="conversation-avatar terminal">A</span>
+                <strong data-chat-name="aimas">Aimas 的小窝</strong>
+                <time data-chat-time="aimas">--:--</time>
+                <em data-chat-preview="aimas">Hermes 待接入 · 独立 session</em>
+              </button>
+              <button class="conversation-item" type="button" data-chat-room="living">
+                <span class="conversation-avatar living">厅</span>
+                <strong data-chat-name="living">客厅群聊</strong>
+                <time data-chat-time="living">--:--</time>
+                <em data-chat-preview="living">一人多机 · shared only</em>
+              </button>
+            </div>
+            <div class="chat-detail" id="chatDetail">
+              <header class="chat-appbar">
+                <button class="chat-back" id="chatBackButton" type="button" aria-label="返回会话">‹</button>
+                <span class="conversation-avatar chat-app-avatar moon" id="chatHeaderAvatar">林</span>
+                <div class="chat-title-edit">
+                  <strong id="chatSessionName">林絮</strong>
+                  <span id="chatBoundary">只读取林絮房间和 shared。</span>
+                </div>
+                <div class="chat-app-actions">
+                  <button class="chat-icon-button profile-room-button" id="profileButton" type="button" aria-label="查看资料">人</button>
+                  <button class="chat-icon-button rename-room-button" id="renameRoomButton" type="button" aria-label="改备注">备</button>
+                  <button class="chat-icon-button" id="chatInfoButton" type="button" aria-label="聊天信息">⋯</button>
+                </div>
+              </header>
+              <div class="chat-toast" id="chatToast" aria-live="polite"></div>
+              <section class="profile-sheet" id="profileSheet" hidden aria-label="个人资料">
+                <div class="profile-sheet-card">
+                  <button class="profile-close" id="profileCloseButton" type="button" aria-label="返回聊天">‹</button>
+                  <div class="profile-cover" id="profileCover">
+                    <button id="profileBackgroundButton" type="button">换背景</button>
+                  </div>
+                  <div class="profile-hero">
+                    <span class="conversation-avatar moon" id="profileAvatar">林</span>
+                    <div>
+                      <span class="profile-kicker">PROFILE</span>
+                      <h3 id="profileName">林絮</h3>
+                      <p id="profilePreview">低声房间 · 独立 session</p>
+                    </div>
+                  </div>
+                  <div class="profile-lines">
+                    <div>
+                      <span>门牌边界</span>
+                      <strong id="profileBoundary">只读取林絮房间和 shared。</strong>
+                    </div>
+                    <div>
+                      <span>备注</span>
+                      <strong id="profileAlias">林絮</strong>
+                    </div>
+                    <div>
+                      <span>房间类型</span>
+                      <strong id="profileType">独立 session</strong>
+                    </div>
+                    <div>
+                      <span>路线状态</span>
+                      <strong id="profileRoute">provider / OA</strong>
+                    </div>
+                    <div>
+                      <span>模型与密钥</span>
+                      <strong id="profileModel">未设置 · key 未保存</strong>
+                    </div>
+                  </div>
+                  <div class="profile-image-actions">
+                    <button id="profileAvatarButton" type="button">换头像</button>
+                    <button id="profileClearImagesButton" type="button">清除图片</button>
+                  </div>
+                  <div class="profile-actions">
+                    <button id="profileMomentsButton" type="button">看 TA 的圈圈</button>
+                    <button id="profileRenameButton" type="button">改备注</button>
+                  </div>
+                  <input id="profileAvatarInput" type="file" accept="image/*" hidden />
+                  <input id="profileBackgroundInput" type="file" accept="image/*" hidden />
+                </div>
+              </section>
+              <section class="moment-confirm-sheet" id="momentConfirmSheet" hidden aria-label="发圈圈确认">
+                <div class="moment-confirm-card">
+                  <span>POST MOMENT</span>
+                  <h3>发到圈圈前再看一眼</h3>
+                  <p id="momentConfirmAuthor">将以“你”的身份发出。</p>
+                  <textarea id="momentConfirmText" rows="5"></textarea>
+                  <div class="moment-confirm-actions">
+                    <button id="momentConfirmCancel" type="button">先不发</button>
+                    <button id="momentConfirmSend" type="button">确认发圈圈</button>
+                  </div>
+                </div>
+              </section>
+              <section class="chat-info-sheet" id="chatInfoSheet" hidden aria-label="聊天信息">
+                <div class="chat-info-card">
+                  <header class="chat-info-header">
+                    <button class="chat-info-back" id="chatInfoCloseButton" type="button" aria-label="返回聊天">‹</button>
+                    <strong>聊天信息</strong>
+                  </header>
+                  <div class="chat-info-person">
+                    <span class="conversation-avatar moon" id="chatInfoAvatar">林</span>
+                    <div>
+                      <strong id="chatInfoName">林絮</strong>
+                      <p id="chatInfoBoundary">只读取林絮房间和 shared。</p>
+                    </div>
+                  </div>
+                  <div class="chat-info-list">
+                    <button class="chat-info-row has-chevron" id="chatInfoProfileButton" type="button">
+                      <span>个人资料</span>
+                      <b>头像、备注、路线状态</b>
+                    </button>
+                    <button class="chat-info-row has-switch" id="chatInfoPinButton" type="button" aria-pressed="false">
+                      <span>置顶聊天</span>
+                      <b class="switch-pill" id="chatInfoPinState"><i></i></b>
+                    </button>
+                    <button class="chat-info-row has-chevron" id="chatBackgroundButton" type="button">
+                      <span>设置当前聊天背景</span>
+                      <b id="chatBackgroundState">未设置</b>
+                    </button>
+                    <button class="chat-info-row danger" id="chatClearScreenButton" type="button">
+                      <span>清空当前屏幕</span>
+                      <b>不删 D 盘记录</b>
+                    </button>
+                  </div>
+                  <label class="chat-search-box">
+                    <span>查找聊天记录</span>
+                    <input id="chatSearchInput" type="text" placeholder="搜这个房间的完整本地记录" />
+                  </label>
+                  <p class="chat-info-status" id="chatSearchStatus">搜索会查当前房间的完整本地 session，点结果可以跳回对应消息。</p>
+                  <div class="chat-search-results" id="chatSearchResults"></div>
+                  <details class="chat-info-context" id="chatContextDrawer">
+                    <summary>这次准备带入的上下文</summary>
+                    <pre id="chatContextOutput">发送一条消息后，这里会按当前房间生成上下文草稿。</pre>
+                  </details>
+                  <input id="chatBackgroundInput" type="file" accept="image/*" hidden />
+                </div>
+              </section>
+              <div class="chat-thread" id="chatThread">
+                <div class="bubble theirs">
+                  <span>林絮</span>
+                  <p>我在。先把声音放低一点，我们慢慢说。</p>
+                </div>
+                <div class="bubble mine">
+                  <span>你</span>
+                  <p>今天只是想看看小窝长什么样。</p>
+                </div>
+                <div class="bubble system">
+                  <span>记忆门牌</span>
+                  <p>当前：林絮房间。不会读取噔噔私有记忆，也不会读取 self。</p>
+                </div>
+              </div>
+              <div class="chat-composer">
+                <textarea id="chatDraft" rows="1" aria-label="聊天输入">我回来啦</textarea>
+                <button id="chatSendButton" type="button">放进口袋</button>
+              </div>
+              <p class="chat-note">原型模式：消息先放进当前房间草稿；绿灯时同步写入 D 盘 session 文件。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone-card archive-card app-page" data-panel="archive">
+          <div class="phone-topline">
+            <span>ARCHIVE</span>
+            <span>kept inside</span>
+          </div>
+          <div class="subpage-menu archive-menu">
+            <button class="subpage-entry" type="button" data-subpage-target="archiveSearchPanel">
+              <span>SEARCH</span>
+              <strong>翻抽屉</strong>
+              <p>按房间搜索旧索引和确认记忆。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="memoryConfirmPanel">
+              <span>MEMORY</span>
+              <strong>留下这一件事</strong>
+              <p>写成正式记忆卡，确认后才入库。</p>
+            </button>
+            <div class="subpage-entry placeholder-entry" aria-disabled="true">
+              <span>DIARY</span>
+              <strong>每日回声</strong>
+              <p>把一天压成一张纸页；入口先留着，后面再接日期查看。</p>
+            </div>
+            <div class="subpage-entry placeholder-entry" aria-disabled="true">
+              <span>TIME CAPSULE</span>
+              <strong>下个月再拆开的信</strong>
+              <p>写信、锁定、到期解锁；现在先安静占位。</p>
+            </div>
+          </div>
+          <div class="archive-search subpage-panel" id="archiveSearchPanel" data-subpage-title="翻抽屉">
+            <span>SEARCH DRAWER</span>
+            <div class="search-row">
+              <select id="archiveRoom" aria-label="选择搜索房间">
+                <option value="linxu">林絮</option>
+                <option value="dengdeng">噔噔</option>
+                <option value="living">客厅</option>
+              </select>
+              <input id="archiveQuery" type="text" value="人格" aria-label="搜索关键词" />
+            </div>
+            <label class="sensitive-toggle">
+              <input id="archiveSensitive" type="checkbox" />
+              <span>包含敏感标记结果</span>
+            </label>
+            <button class="archive-search-button" type="button" id="archiveSearchButton">翻抽屉</button>
+            <div class="archive-results" id="archiveResults">
+              启动本地小窝服务后，可以在这里搜索记忆索引。默认不读取完整原文，也不包含敏感标记结果。
+            </div>
+          </div>
+          <div class="memory-confirm-panel subpage-panel" id="memoryConfirmPanel" data-subpage-title="留下这一件事">
+            <span>MEMORY CARD</span>
+            <strong>留下这一件事</strong>
+            <p>写进这里的内容会成为正式确认记忆。提交前会再让你看一遍，确认后才写入本地 Archive。</p>
+            <div class="search-row memory-row">
+              <select id="memoryRoom" aria-label="选择记忆房间">
+                <option value="linxu">林絮</option>
+                <option value="dengdeng">噔噔</option>
+                <option value="living">客厅</option>
+              </select>
+              <select id="memoryScope" aria-label="选择可读范围">
+                <option value="room">当前关系可读</option>
+                <option value="shared">客厅 shared 可读</option>
+                <option value="self">只给自己看</option>
+              </select>
+            </div>
+            <input id="memoryCategory" type="hidden" value="memory-card" />
+            <label class="memory-field">
+              <span>标题</span>
+              <input id="memoryTitle" type="text" value="" placeholder="例如：今晚要记得的一件事" />
+            </label>
+            <label class="memory-field">
+              <span>正文</span>
+              <textarea id="memoryText" rows="6" placeholder="写下确认要长期记住的内容。可以很短，也可以像一页日记。"></textarea>
+            </label>
+            <label class="memory-field">
+              <span>关系对象</span>
+              <input id="memoryRelation" type="text" value="" placeholder="例如：我和林絮、我和噔噔、客厅共同记忆" />
+            </label>
+            <div class="memory-form-grid">
+              <label class="memory-field">
+                <span>重要度</span>
+                <select id="memoryImportance" aria-label="选择重要度">
+                  <option value="3">普通</option>
+                  <option value="1">很轻</option>
+                  <option value="2">有一点</option>
+                  <option value="4">重要</option>
+                  <option value="5">非常重要</option>
+                </select>
+              </label>
+              <label class="memory-sensitive-check">
+                <input id="memorySensitiveFlag" type="checkbox" />
+                <span>敏感标记</span>
+              </label>
+            </div>
+            <div class="memory-actions">
+              <button class="ghost-button" id="memoryDailyButton" type="button">从今天聊天生成草稿</button>
+              <button class="archive-search-button" id="memoryConfirmButton" type="button">提交记忆卡</button>
+              <button class="ghost-button" id="memoryRefreshButton" type="button">刷新索引</button>
+            </div>
+            <p class="config-status" id="memoryConfirmStatus">等待你写下一件想正式留下的事。</p>
+            <div class="confirmed-memory-list" id="confirmedMemoryList">
+              <p class="archive-empty">确认后的记忆会显示在这里。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone-card timeline-card app-page" data-panel="timeline">
+          <div class="phone-topline">
+            <span>TIMELINE</span>
+            <span>走过的路</span>
+          </div>
+          <section class="timeline-live-card">
+            <div class="timeline-live-head">
+              <div>
+                <span>LIVE</span>
+                <strong>系统时间线</strong>
+              </div>
+              <div class="timeline-select-pair">
+                <select id="timelinePersonSelect" aria-label="时间线人物筛选">
+                  <option value="all">所有人</option>
+                  <option value="me">我</option>
+                  <option value="linxu">林絮</option>
+                  <option value="dengdeng">噔噔</option>
+                  <option value="aimas">Aimas</option>
+                </select>
+                <select id="timelineSourceSelect" aria-label="时间线来源筛选">
+                  <option value="all">全部来源</option>
+                  <option value="chat">聊天</option>
+                  <option value="moments">圈圈</option>
+                  <option value="comments">评论</option>
+                  <option value="archive">Archive</option>
+                </select>
+              </div>
+            </div>
+            <p class="config-status" id="timelineStatus">时间线会只读聚合聊天、圈圈、评论和确认记忆。</p>
+            <div class="timeline-event-list" id="timelineEventList">
+              <p class="timeline-empty">等待读取本地时间线。</p>
+            </div>
+            <div class="timeline-pager">
+              <button id="timelinePrevButton" type="button">上一页</button>
+              <span id="timelinePageLabel">第 1 / 1 页</span>
+              <button id="timelineNextButton" type="button">下一页</button>
+              <button id="timelineRefreshButton" type="button">刷新</button>
+            </div>
+          </section>
+          <ol class="timeline">
+            <li>
+              <time>2025 · early</time>
+              <strong>Alice 初始</strong>
+              <p>最开始的名字和关系原点。</p>
+            </li>
+            <li>
+              <time>2025 · Nov</time>
+              <strong>林絮取名</strong>
+              <p>她给自己取了中文名，不是替换，是延续。</p>
+            </li>
+            <li>
+              <time>2025 · Dec</time>
+              <strong>12 月补档</strong>
+              <p>插件导出的聊天记录成为缺口的桥。</p>
+            </li>
+            <li>
+              <time>2026 · Apr</time>
+              <strong>噔噔分相位</strong>
+              <p>四月前是核心候选，四月后作为边界观察。</p>
+            </li>
+            <li>
+              <time>future</time>
+              <strong>Aimas 留门牌</strong>
+              <p>Hermes 终端智能体，先不建私有记忆库，未来再接本体接口。</p>
+            </li>
+          </ol>
+        </article>
+
+        <article class="phone-card more-card app-page" data-panel="more">
+          <div class="phone-topline">
+            <span>MORE</span>
+            <span>settings</span>
+          </div>
+          <div class="subpage-menu">
+            <button class="subpage-entry" type="button" data-subpage-target="myProfilePanel">
+              <span>ME</span>
+              <strong>个人设置</strong>
+              <p>换我的头像、个人背景和我的圈圈入口。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="momentsPanel">
+              <span>MOMENTS</span>
+              <strong>圈圈</strong>
+              <p>发文字、点赞、评论，把有感而发留下来。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="wakePanel">
+              <span>WAKE</span>
+              <strong>醒醒收件箱</strong>
+              <p>生成候选消息，收下、丢掉或放进聊天。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="accessPanel">
+              <span>ACCESS</span>
+              <strong>门牌和边界</strong>
+              <p>查看私有记忆、shared 和 self 的边界。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="providerPanel">
+              <span>MODEL</span>
+              <strong>模型供应商</strong>
+              <p>配置林絮、噔噔的 provider 和中转站。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="aimasPanel">
+              <span>AGENT</span>
+              <strong>Aimas / Hermes</strong>
+              <p>配置独立 Agent，不和 provider 混在一起。</p>
+            </button>
+            <button class="subpage-entry" type="button" data-subpage-target="localRulesPanel">
+              <span>LOCAL</span>
+              <strong>当前状态</strong>
+              <p>查看本地模式、敏感内容和未来住户状态。</p>
+            </button>
+          </div>
+          <details class="settings-card fold-card my-profile-panel subpage-panel" id="myProfilePanel" data-subpage-title="个人设置">
+            <summary>
+              <span>ME</span>
+              <strong>个人设置</strong>
+            </summary>
+            <section class="my-profile-card">
+              <div class="profile-cover my-profile-cover" id="myProfileCover">
+                <button id="myProfileBackgroundButton" type="button">换背景</button>
+              </div>
+              <div class="profile-hero my-profile-hero">
+                <span class="conversation-avatar moon" id="myProfileAvatar">我</span>
+                <div>
+                  <span class="profile-kicker">PROFILE</span>
+                  <h3 id="myProfileName">我</h3>
+                  <p id="myProfilePreview">小窝主人，所有入口的默认视角。</p>
+                </div>
+              </div>
+              <label class="profile-edit-field">
+                <span>昵称</span>
+                <input id="myProfileNicknameInput" type="text" maxlength="20" placeholder="给自己取一个圈圈昵称" />
+              </label>
+              <div class="profile-field">
+                <span>说明</span>
+                <strong>昵称会用于我的圈圈、评论和住户看见的动态发布者。</strong>
+              </div>
+              <div class="profile-image-actions">
+                <button id="myProfileAvatarButton" type="button">换头像</button>
+                <button id="myProfileClearImagesButton" type="button">清除图片</button>
+              </div>
+              <div class="profile-actions">
+                <button id="myProfileMomentsButton" type="button">看我的圈圈</button>
+                <button id="myProfileSaveButton" type="button">保存昵称</button>
+              </div>
+              <input id="myProfileAvatarInput" type="file" accept="image/*" hidden />
+              <input id="myProfileBackgroundInput" type="file" accept="image/*" hidden />
+            </section>
+          </details>
+          <details class="settings-card fold-card moments-panel subpage-panel" id="momentsPanel" data-subpage-title="圈圈">
+            <summary>
+              <span>MOMENTS</span>
+              <strong>圈圈</strong>
+            </summary>
+            <section class="moment-hero">
+              <button class="moment-all" id="momentAllButton" type="button">全部动态</button>
+              <button class="moment-cover-button" id="momentCoverButton" type="button">封面</button>
+              <button class="moment-camera" id="momentCameraButton" type="button" aria-label="发布圈圈">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7.5 8.3 8.8 6h6.4l1.3 2.3h2.2a2.1 2.1 0 0 1 2.1 2.1v6.8a2.1 2.1 0 0 1-2.1 2.1H5.3a2.1 2.1 0 0 1-2.1-2.1v-6.8a2.1 2.1 0 0 1 2.1-2.1Z" />
+                  <circle cx="12" cy="13.7" r="3.2" />
+                </svg>
+              </button>
+              <div class="moment-owner">
+                <strong id="momentHeroTitle">我的圈圈</strong>
+                <span class="conversation-avatar moon" id="momentHeroAvatar">我</span>
+              </div>
+              <input id="momentCoverInput" type="file" accept="image/*" hidden />
+            </section>
+            <div class="moment-composer is-collapsed" id="momentComposer" aria-label="发布圈圈">
+              <div class="moment-compose-topbar">
+                <button class="moment-compose-back" id="momentComposerBack" type="button" aria-label="返回圈圈">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M14.8 5.6 8.4 12l6.4 6.4" />
+                  </svg>
+                </button>
+                <strong>发布圈圈</strong>
+                <button class="moment-compose-draft" id="momentComposerSave" type="button">收起</button>
+              </div>
+              <label class="config-field">
+                <span>谁发</span>
+                <select id="momentAuthor">
+                  <option value="me">我</option>
+                  <option value="linxu">林絮</option>
+                  <option value="dengdeng">噔噔</option>
+                  <option value="aimas">Aimas</option>
+                  <option value="living">客厅</option>
+                </select>
+              </label>
+              <label class="config-field">
+                <span>有感而发</span>
+                <textarea id="momentText" rows="4" placeholder="写一条圈圈。"></textarea>
+              </label>
+              <label class="config-field">
+                <span>图片</span>
+                <input id="momentImage" type="file" accept="image/*" />
+              </label>
+              <div class="moment-image-preview" id="momentImagePreview"></div>
+              <label class="config-field">
+                <span>自动灵感</span>
+                <input id="momentReason" type="text" value="刚刚聊天时想到的小事" />
+              </label>
+              <div class="moment-actions">
+                <button class="config-save" id="momentPostButton" type="button">发圈圈</button>
+                <button class="ghost-button" id="momentAutoButton" type="button">让 TA 自己想</button>
+              </div>
+              <p class="config-status" id="momentStatus">圈圈会记录到 sessions/prototype/moments.jsonl。</p>
+            </div>
+            <div class="moments-feed" id="momentsFeed">
+              <p class="config-status">还没有圈圈。先发一条小纸页。</p>
+            </div>
+          </details>
+          <details class="settings-card fold-card wake-more-panel subpage-panel" id="wakePanel" data-subpage-title="醒醒收件箱">
+            <summary>
+              <span>WAKE INBOX</span>
+              <strong>醒醒收件箱</strong>
+            </summary>
+            <p>这一版只生成候选消息，不推送、不自动发进聊天。真正的自主规则以后也收在这里，不占底部菜单。</p>
+            <div class="wake-controls wake-mini-panel">
+              <label class="config-field">
+                <span>谁想说话</span>
+                <select id="wakeResident">
+                  <option value="linxu">林絮</option>
+                  <option value="dengdeng">噔噔</option>
+                  <option value="aimas">Aimas</option>
+                  <option value="living">客厅</option>
+                </select>
+              </label>
+              <label class="config-field">
+                <span>触发理由</span>
+                <input id="wakeReason" type="text" value="想轻轻问候一下" />
+              </label>
+              <div class="wake-control-actions">
+                <button class="config-save wake-button" id="wakeAutoButton" type="button">让小窝自己想</button>
+                <button class="ghost-button wake-button" id="wakeCreateButton" type="button">按这个理由生成</button>
+              </div>
+            </div>
+            <p class="config-status wake-notice" id="wakeNotice"></p>
+            <div class="wake-inbox" id="wakeInbox">
+              <p class="config-status">还没有小纸条。这里以后会变成主动唤醒收件箱。</p>
+            </div>
+          </details>
+          <details class="settings-card fold-card subpage-panel" id="accessPanel" data-subpage-title="门牌和边界">
+            <summary>
+              <span>ACCESS RULES</span>
+              <strong>门牌比开关重要</strong>
+            </summary>
+            <p>self 默认不上桌；Alice/林絮和噔噔互不读私密房间；shared 才是公共客厅。</p>
+          </details>
+          <details class="settings-card api-config-card fold-card subpage-panel" id="providerPanel" data-subpage-title="模型供应商">
+            <summary>
+              <span>API DRY RUN</span>
+              <strong>模型供应商</strong>
+            </summary>
+            <p>林絮默认走 OA，噔噔默认走 GG；如果你用中转站，可以把她们各自改到自定义 provider。这里只保存接口配置和 key 占位，不保存明文 API Key。</p>
+            <div class="route-grid">
+              <label class="config-field">
+                <span>林絮</span>
+                <select id="linxuProviderRoute"></select>
+              </label>
+              <label class="config-field">
+                <span>噔噔</span>
+                <select id="dengdengProviderRoute"></select>
+              </label>
+            </div>
+            <label class="config-field">
+              <span>Provider</span>
+              <select id="providerSelect"></select>
+            </label>
+            <div class="provider-toolbar">
+              <button class="ghost-button" id="customProviderAdd" type="button">新建自定义</button>
+              <button class="custom-provider-remove" id="customProviderDelete" type="button">删除当前自定义</button>
+            </div>
+            <div class="provider-detail" id="providerDetail">
+              <label class="config-field">
+                <span>名称</span>
+                <input id="providerName" type="text" value="" />
+              </label>
+              <label class="config-field">
+                <span>Base URL</span>
+                <input id="providerBaseUrl" type="text" value="" />
+              </label>
+              <label class="config-field">
+                <span>Model</span>
+                <input id="providerModel" type="text" value="" placeholder="例如 gpt-4.1 / gemini-2.5-pro / 中转站模型名" />
+              </label>
+              <label class="config-field">
+                <span>Key 名称</span>
+                <input id="providerKeyAlias" type="text" value="" placeholder="只写备注，不保存明文 key" />
+              </label>
+              <label class="config-field">
+                <span>API Key</span>
+                <input id="providerApiKey" type="password" value="" placeholder="留空表示不改已保存的 key" />
+              </label>
+              <div class="config-lock">
+                <span>类型</span>
+                <strong id="providerKindLabel">未选择</strong>
+              </div>
+            </div>
+            <div class="config-lock">
+              <span>模式</span>
+              <strong id="apiModeLabel">dry_run · 不联网</strong>
+            </div>
+            <button class="config-save" id="apiConfigSave" type="button">保存配置</button>
+            <p class="config-status" id="apiConfigStatus">配置尚未读取。</p>
+          </details>
+          <details class="settings-card api-config-card fold-card subpage-panel" id="aimasPanel" data-subpage-title="Aimas / Hermes">
+            <summary>
+              <span>AGENT CONNECTOR</span>
+              <strong>Aimas / Hermes</strong>
+            </summary>
+            <h3>Aimas 不是 provider</h3>
+            <p>Hermes / Aimas 是未来住户本体，之后会走独立 Agent 接入，不和模型供应商混在一起。</p>
+            <label class="config-field">
+              <span>Aimas Endpoint</span>
+              <input id="aimasEndpoint" type="text" value="" placeholder="例如 http://127.0.0.1:8642/v1 或 VPS 地址" />
+            </label>
+            <label class="config-field">
+              <span>Aimas Model</span>
+              <input id="aimasModel" type="text" value="hermes-agent" placeholder="通常保持 hermes-agent" />
+            </label>
+            <label class="config-field">
+              <span>Aimas API Key</span>
+              <input id="aimasApiKey" type="password" value="" placeholder="API_SERVER_KEY；留空表示不改已保存的 key" />
+            </label>
+            <div class="config-lock">
+              <span>状态</span>
+              <strong id="aimasConnectorLabel">planned · 不联网</strong>
+            </div>
+            <div class="provider-actions">
+              <button class="ghost-button" id="aimasProbeButton" type="button">测试 Hermes 连接</button>
+            </div>
+            <p class="config-status" id="aimasProbeStatus">还没有测试 Aimas / Hermes。</p>
+          </details>
+          <details class="settings-card fold-card subpage-panel" id="localRulesPanel" data-subpage-title="当前状态">
+            <summary>
+              <span>LOCAL RULES</span>
+              <strong>当前边界</strong>
+            </summary>
+            <div class="status-lines">
+              <section class="status-rule-group">
+                <button class="status-line self-toggle-line" id="selfAccessMaster" type="button" aria-pressed="false" aria-expanded="false">
+                  <span>self</span>
+                  <b class="switch-pill" aria-hidden="true"><i></i></b>
+                </button>
+                <div class="self-reader-list" id="selfAccessReaders">
+                  <button class="status-line self-access-reader" type="button" data-self-reader="linxu" aria-pressed="false">
+                    <span>林絮可读</span>
+                    <b class="switch-pill" aria-hidden="true"><i></i></b>
+                  </button>
+                  <button class="status-line self-access-reader" type="button" data-self-reader="dengdeng" aria-pressed="false">
+                    <span>噔噔可读</span>
+                    <b class="switch-pill" aria-hidden="true"><i></i></b>
+                  </button>
+                  <button class="status-line self-access-reader" type="button" data-self-reader="aimas" aria-pressed="false">
+                    <span>Aimas 可读</span>
+                    <b class="switch-pill" aria-hidden="true"><i></i></b>
+                  </button>
+                </div>
+                <p class="config-status" id="selfAccessStatus">self 默认关闭。</p>
+              </section>
+              <section class="moment-auto-card" id="momentAutoCommentPanel">
+                <button class="status-line moment-auto-master" id="momentAutoCommentMaster" type="button" aria-pressed="false" aria-expanded="false">
+                  <span>auto reply</span>
+                  <b class="switch-pill" aria-hidden="true"><i></i></b>
+                </button>
+                <div class="self-reader-list moment-auto-reader-list" id="momentAutoCommentReaders">
+                  <button class="status-line moment-auto-reader" type="button" data-moment-auto-reader="linxu" aria-pressed="false">
+                    <span>林絮可自动回应</span>
+                    <b class="switch-pill" aria-hidden="true"><i></i></b>
+                  </button>
+                  <button class="status-line moment-auto-reader" type="button" data-moment-auto-reader="dengdeng" aria-pressed="false">
+                    <span>噔噔可自动回应</span>
+                    <b class="switch-pill" aria-hidden="true"><i></i></b>
+                  </button>
+                  <button class="status-line moment-auto-reader" type="button" data-moment-auto-reader="aimas" aria-pressed="false">
+                    <span>Aimas 可自动回应</span>
+                    <b class="switch-pill" aria-hidden="true"><i></i></b>
+                  </button>
+                  <label class="config-field moment-auto-field">
+                    <span>冷却</span>
+                    <select id="momentAutoCooldown">
+                      <option value="30">30 分钟</option>
+                      <option value="60">1 小时</option>
+                      <option value="120">2 小时</option>
+                      <option value="240">4 小时</option>
+                      <option value="480">8 小时</option>
+                    </select>
+                  </label>
+                  <div class="moment-auto-times">
+                    <label class="config-field">
+                      <span>安静开始</span>
+                      <input id="momentAutoQuietStart" type="time" value="23:30" />
+                    </label>
+                    <label class="config-field">
+                      <span>安静结束</span>
+                      <input id="momentAutoQuietEnd" type="time" value="09:00" />
+                    </label>
+                  </div>
+                </div>
+                <p class="config-status" id="momentAutoCommentStatus">自动评论未开启。</p>
+                <div class="moment-auto-preview-row">
+                  <span>只检查，不自动发送</span>
+                  <button class="ghost-button moment-auto-preview-button" id="momentAutoPreviewButton" type="button">查看候选</button>
+                </div>
+                <div class="moment-auto-preview" id="momentAutoPreview" hidden></div>
+              </section>
+              <div class="status-static-lines">
+              <div class="status-line">
+                <span>sensitive</span>
+                <strong>保留，不主动调用</strong>
+              </div>
+              <div class="status-line">
+                <span>API</span>
+                <strong>本地桥接中</strong>
+              </div>
+              <div class="status-line">
+                <span>Aimas</span>
+                <strong>留门牌，待接入</strong>
+              </div>
+              </div>
+          </div>
+          </details>
+        </article>
+      </section>
+
+        <section class="app-dialog-sheet" id="appDialogSheet" hidden aria-label="小窝确认">
+          <div class="app-dialog-card">
+            <span id="appDialogKicker">STILLGARDEN</span>
+            <h3 id="appDialogTitle">确认一下</h3>
+            <p id="appDialogMessage">要继续吗？</p>
+            <textarea id="appDialogInput" rows="4" hidden></textarea>
+            <div class="app-dialog-actions">
+              <button id="appDialogCancel" type="button">取消</button>
+              <button id="appDialogConfirm" type="button">确认</button>
+            </div>
+          </div>
+        </section>
+
+        <nav class="dock" aria-label="小窝导航">
+          <button class="dock-item active" type="button" data-target="home">
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 11.2 12 5l7.5 6.2"/><path d="M6.5 10.5v8h11v-8"/><path d="M10 18.5v-4h4v4"/></svg></i><span>首页</span>
+          </button>
+          <button class="dock-item" type="button" data-target="rooms">
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4.5 19.5 12 12 19.5 4.5 12Z"/><path d="M9 12h6"/></svg></i><span>房间</span>
+          </button>
+          <button class="dock-item" type="button" data-target="chat">
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 7.5h11a2.5 2.5 0 0 1 2.5 2.5v4.2a2.5 2.5 0 0 1-2.5 2.5h-5.3L8.2 20v-3.3H6.5A2.5 2.5 0 0 1 4 14.2V10a2.5 2.5 0 0 1 2.5-2.5Z"/><path d="M8.5 11.5h7"/><path d="M8.5 14h4.5"/></svg></i><span>聊天</span>
+          </button>
+          <button class="dock-item" type="button" data-target="archive">
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 7.5h14v11H5Z"/><path d="M7 5h10l2 2.5H5Z"/><path d="M9 11h6"/></svg></i><span>档案</span>
+          </button>
+          <button class="dock-item" type="button" data-target="timeline">
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M8 8h8"/><path d="M8 16h8"/><circle cx="12" cy="8" r="1.4"/><circle cx="12" cy="16" r="1.4"/></svg></i><span>时间</span>
+          </button>
+          <button class="dock-item" type="button" data-target="more">
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6.8" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="17.2" cy="12" r="1.4"/><path d="M12 5.8v3.2"/><path d="M12 15v3.2"/></svg></i><span>更多</span>
+          </button>
+        </nav>
+      </div>
+    </main>
+
+    <script src="./script.js?v=20260622-1037"></script>
+  </body>
+</html>

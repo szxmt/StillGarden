@@ -1,0 +1,41 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.swp
+
+# Python caches and local envs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Node / frontend caches
+node_modules/
+.parcel-cache/
+.vite/
+dist/
+build/
+
+# Local runtime logs
+*.log
+logs/
+
+# Local secrets
+*.local.json
+secrets.local.json
+
+# Local generated preview artifacts
+preview-*.tmp
+
+# Raw exported archives are kept in the local workspace but exceed normal GitHub limits.
+# Do not ignore source, docs, sessions/prototype json/jsonl data, or memory index files.
+gpt/raw/*.zip
+gemini/raw/*.zip
+incoming/**/*.zip
