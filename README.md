@@ -43,7 +43,7 @@ lunette-v0.2/
   sessions/
     prototype/
   frontend/
-    stillgarden-prototype-v0.1/
+    lunatte-v0.2/
 ```
 
 根目录的 `self/`、`gpt/`、`gemini/`、`shared/`、`tools/` 和记忆库索引文档都是项目文件，不能遗漏。
@@ -53,7 +53,7 @@ lunette-v0.2/
 原型位置：
 
 ```text
-frontend\stillgarden-prototype-v0.1
+frontend\lunatte-v0.2
 ```
 
 主要文件：
@@ -79,7 +79,7 @@ start-stillgarden.ps1
 进入原型目录：
 
 ```powershell
-cd D:\A月亮啊\lunette-v0.2\frontend\stillgarden-prototype-v0.1
+cd D:\A月亮啊\lunette-v0.2\frontend\lunatte-v0.2
 ```
 
 启动方式：

@@ -53,7 +53,7 @@ memory-vault-starter/
   sessions/
     prototype/
   frontend/
-    stillgarden-prototype-v0.1/
+    lunatte-v0.2/
       index.html
       styles.css
       script.js
@@ -65,13 +65,13 @@ memory-vault-starter/
 
 运行入口：
 
-- 前端入口：`frontend/stillgarden-prototype-v0.1/index.html`
-- 样式入口：`frontend/stillgarden-prototype-v0.1/styles.css`
-- 逻辑入口：`frontend/stillgarden-prototype-v0.1/script.js`
-- 本地后端：`frontend/stillgarden-prototype-v0.1/server.py`
+- 前端入口：`frontend/lunatte-v0.2/index.html`
+- 样式入口：`frontend/lunatte-v0.2/styles.css`
+- 逻辑入口：`frontend/lunatte-v0.2/script.js`
+- 本地后端：`frontend/lunatte-v0.2/server.py`
 - 启动脚本：
-  - `frontend/stillgarden-prototype-v0.1/start-stillgarden.bat`
-  - `frontend/stillgarden-prototype-v0.1/start-stillgarden.ps1`
+  - `frontend/lunatte-v0.2/start-stillgarden.bat`
+  - `frontend/lunatte-v0.2/start-stillgarden.ps1`
 
 当前形态：
 
@@ -114,7 +114,7 @@ memory-vault-starter/
   tools/
   sessions/
   frontend/
-    stillgarden-prototype-v0.1/
+    lunatte-v0.2/
       index.html
       styles.css
       script.js
@@ -196,28 +196,28 @@ Project-Docs/
 
 同名但内容不同：
 
-- `frontend/stillgarden-prototype-v0.1/index.html`
-- `frontend/stillgarden-prototype-v0.1/styles.css`
-- `frontend/stillgarden-prototype-v0.1/script.js`
-- `frontend/stillgarden-prototype-v0.1/server.py`
+- `frontend/lunatte-v0.2/index.html`
+- `frontend/lunatte-v0.2/styles.css`
+- `frontend/lunatte-v0.2/script.js`
+- `frontend/lunatte-v0.2/server.py`
 
 同名且内容一致：
 
 - 根 `README.md`
 - `tools/README.md`
-- `frontend/stillgarden-prototype-v0.1/README.md`
-- `frontend/stillgarden-prototype-v0.1/start-stillgarden.bat`
-- `frontend/stillgarden-prototype-v0.1/start-stillgarden.ps1`
+- `frontend/lunatte-v0.2/README.md`
+- `frontend/lunatte-v0.2/start-stillgarden.bat`
+- `frontend/lunatte-v0.2/start-stillgarden.ps1`
 
 只存在于 Antigravity 的重点文件：
 
 - `.gitignore`
 - `core-design-principles.md`
-- `frontend/stillgarden-prototype-v0.1/css/main.css`
-- `frontend/stillgarden-prototype-v0.1/css/variables.css`
-- `frontend/stillgarden-prototype-v0.1/css/reset.css`
-- `frontend/stillgarden-prototype-v0.1/css/components.css`
-- `frontend/stillgarden-prototype-v0.1/css/pages/`
+- Antigravity 代码版本中的 `css/main.css`
+- Antigravity 代码版本中的 `css/variables.css`
+- Antigravity 代码版本中的 `css/reset.css`
+- Antigravity 代码版本中的 `css/components.css`
+- Antigravity 代码版本中的 `css/pages/`
 - 多个一次性 patch/fix 脚本：
   - `apply_custom_select.py`
   - `apply_generic_select.py`
@@ -339,7 +339,7 @@ lunette-v0.2/
   sessions/
     prototype/
   frontend/
-    stillgarden-prototype-v0.1/
+    lunatte-v0.2/
       index.html
       styles.css
       script.js
@@ -451,8 +451,8 @@ D:\Antigravity\Lunette\memory-vault-starter
 4. 只引入 CSS 目录结构，不改变业务 JS。
 5. 修改 HTML 样式入口前先确认缓存版本。
 6. 跑静态检查：
-   - `node --check frontend/stillgarden-prototype-v0.1/script.js`
-   - `python -m py_compile frontend/stillgarden-prototype-v0.1/server.py`
+   - `node --check frontend/lunatte-v0.2/script.js`
+   - `python -m py_compile frontend/lunatte-v0.2/server.py`
 7. 启动 V0.2 本地服务测试，不占用长期隐藏服务。
 8. 验证 Archive、Self、Moments、Timeline、Auto Reply 基础链路。
 9. 确认数据写入 V0.2 的 `sessions/prototype` 副本。
@@ -500,7 +500,7 @@ V0.2 工作区内现在同时存在多类材料。它们不是同一种东西，
 来源：
 
 ```text
-frontend/stillgarden-prototype-v0.1/
+frontend/lunatte-v0.2/
 ```
 
 角色：
@@ -604,14 +604,14 @@ V0.1 根目录蓝图是项目主线，前端原型只是主线下的一个可运
 关系口径：
 
 - 根目录文档定义“要做什么”和“边界是什么”。
-- `frontend/stillgarden-prototype-v0.1` 验证“当前哪些东西已经能点、能写、能看”。
+- `frontend/lunatte-v0.2` 验证“当前哪些东西已经能点、能写、能看”。
 - `sessions/prototype` 是原型数据副本，不是最终数据库。
 - `tools/` 里的检索脚本是本地记忆能力的早期实现，不是最终后端架构。
 - `gpt/`、`gemini/`、`self/`、`shared/` 是长期记忆和权限体系，不是 UI 附件。
 
 当前重要结论：
 
-- V0.2 不能只围绕 `frontend/stillgarden-prototype-v0.1` 重构。
+- V0.2 不能只围绕 `frontend/lunatte-v0.2` 重构。
 - 前端拆分、后端拆分、数据库草图都必须保护根目录记忆库规则。
 - 后续 RAG 不是把旧记录灌给模型模仿，而是把记忆、证据、时间线和权限作为可参考背景。
 - 最终目标不是聊天人格、评论人格、发圈人格分裂，而是同一住户系统通过不同入口回应。
@@ -720,7 +720,7 @@ V0.2 处理结论：
 | 任务 | 来源 | 状态 | 说明 |
 |---|---|---|---|
 | 保护 V0.1 根目录蓝图、记忆库索引、隔离规则 | V0.1 蓝图 | 已完成 | 已复制进 V0.2，后续改动必须继续保护 |
-| 保持当前原型可启动 | 当前可运行原型 | 已完成 | `frontend/stillgarden-prototype-v0.1` 是当前运行基准 |
+| 保持当前原型可启动 | 当前可运行原型 | 已完成 | `frontend/lunatte-v0.2` 是当前运行基准 |
 | Archive 正式记忆卡、确认记忆列表 | 当前可运行原型 | 已完成 | 已写入 `confirmed-memory.jsonl` 副本 |
 | Self 总开关和三子开关 | 当前可运行原型 | 已完成 | 请求包按开关带入 self |
 | Moments 手动真实评论 | 当前可运行原型 | 已完成 | 三个住户可反复触发 |

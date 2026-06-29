@@ -194,7 +194,7 @@ memory-search-v0.1.md
 memory-context-v0.1.md
 product-vision-v0.1.md
 front-end-concept-v0.1.md
-frontend/stillgarden-prototype-v0.1/
+frontend/lunatte-v0.2/
 software-roadmap-v0.1.md
 interaction-vision-v0.1.md
 aimas-hermes-integration-v0.1.md
