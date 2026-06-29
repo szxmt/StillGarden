@@ -10,7 +10,8 @@ const {
   autoWakeReasons,
   autoWakeOrder,
   momentAuthors,
-  chatProfiles
+  chatProfiles,
+  createBrowserStorage
 } = window.LunatteCore;
 
 let selectedRoom = "linxu";
@@ -33,6 +34,7 @@ let currentTimelineSource = "all";
 let timelinePage = 1;
 const timelinePageSize = 5;
 const appApi = window.LunatteCore.createApiClient({ isOnline: () => serviceOnline });
+const browserStore = createBrowserStorage(window.localStorage);
 
 let pendingMomentImage = "";
 let currentMomentScope = "all";
@@ -962,7 +964,7 @@ async function renameCurrentRoom() {
 }
 
 function browserDraftKey(room) {
-  return `stillgarden.session.${room}.drafts`;
+  return browserStore.browserDraftKey(room);
 }
 
 function makeDraftRecord(room, text, role = "user") {
@@ -978,32 +980,19 @@ function makeDraftRecord(room, text, role = "user") {
 }
 
 function readBrowserDrafts(room) {
-  try {
-    const raw = window.localStorage.getItem(browserDraftKey(room));
-    const entries = JSON.parse(raw || "[]");
-    return Array.isArray(entries) ? entries : [];
-  } catch (error) {
-    return [];
-  }
+  return browserStore.readBrowserDrafts(room);
 }
 
 function chatPrefsKey() {
-  return "stillgarden.chat.preferences";
+  return browserStore.chatPrefsKey();
 }
 
 function readChatPrefs() {
-  try {
-    const value = JSON.parse(window.localStorage.getItem(chatPrefsKey()) || "{}");
-    return value && typeof value === "object" ? value : {};
-  } catch (error) {
-    return {};
-  }
+  return browserStore.readChatPrefs();
 }
 
 function writeChatPrefs(prefs) {
-  try {
-    window.localStorage.setItem(chatPrefsKey(), JSON.stringify(prefs || {}));
-  } catch (error) {
+  if (!browserStore.writeChatPrefs(prefs)) {
     showChatToast("这个浏览器没有存下聊天设置。", "warning", 2200);
   }
 }
@@ -1050,13 +1039,7 @@ function writeBrowserDraft(room, text) {
 }
 
 function writeBrowserEntry(room, record) {
-  const entries = [...readBrowserDrafts(room), record].slice(-60);
-  try {
-    window.localStorage.setItem(browserDraftKey(room), JSON.stringify(entries));
-  } catch (error) {
-    // The visible bubble still remains in the current page if storage is unavailable.
-  }
-  return record;
+  return browserStore.writeBrowserEntry(room, record);
 }
 
 function mergeDraftEntriesWithLimit(limit, ...groups) {
@@ -1170,22 +1153,15 @@ function chatAvatarMeta(room) {
 }
 
 function profileAssetsKey() {
-  return "stillgarden.profile.assets";
+  return browserStore.profileAssetsKey();
 }
 
 function readProfileAssets() {
-  try {
-    const value = JSON.parse(window.localStorage.getItem(profileAssetsKey()) || "{}");
-    return value && typeof value === "object" ? value : {};
-  } catch (error) {
-    return {};
-  }
+  return browserStore.readProfileAssets();
 }
 
 function writeProfileAssets(assets) {
-  try {
-    window.localStorage.setItem(profileAssetsKey(), JSON.stringify(assets || {}));
-  } catch (error) {
+  if (!browserStore.writeProfileAssets(assets)) {
     showChatToast("图片有点大，浏览器没有存下。", "warning", 2600);
   }
 }
@@ -1614,11 +1590,11 @@ function showWakeNotice(message) {
 }
 
 function momentBrowserKey() {
-  return "stillgarden.moments.feed";
+  return browserStore.momentBrowserKey();
 }
 
 function momentDraftKey() {
-  return "stillgarden.moments.draft";
+  return browserStore.momentDraftKey();
 }
 
 function momentAvatarMeta(author) {
@@ -1710,29 +1686,15 @@ function renderMomentAutoCommentButtons(entry = {}) {
 }
 
 function readBrowserMoments() {
-  try {
-    const entries = JSON.parse(window.localStorage.getItem(momentBrowserKey()) || "[]");
-    return Array.isArray(entries) ? entries : [];
-  } catch (error) {
-    return [];
-  }
+  return browserStore.readBrowserMoments();
 }
 
 function writeBrowserMoments(entries) {
-  try {
-    window.localStorage.setItem(momentBrowserKey(), JSON.stringify(entries.slice(0, 200)));
-  } catch (error) {
-    // Current page still renders the in-memory list.
-  }
+  browserStore.writeBrowserMoments(entries);
 }
 
 function readMomentDraft() {
-  try {
-    const draft = JSON.parse(window.localStorage.getItem(momentDraftKey()) || "{}");
-    return draft && typeof draft === "object" ? draft : {};
-  } catch (error) {
-    return {};
-  }
+  return browserStore.readMomentDraft();
 }
 
 function writeMomentDraft() {
@@ -1743,9 +1705,7 @@ function writeMomentDraft() {
     image_data: pendingMomentImage || "",
     saved_at: new Date().toISOString()
   };
-  try {
-    window.localStorage.setItem(momentDraftKey(), JSON.stringify(draft));
-  } catch (error) {
+  if (!browserStore.writeMomentDraft(draft)) {
     const status = document.getElementById("momentStatus");
     if (status) status.textContent = "草稿文字还在页面里，但图片太大，浏览器没有存下。";
   }
@@ -1764,11 +1724,7 @@ function restoreMomentDraft() {
 }
 
 function clearMomentDraft() {
-  try {
-    window.localStorage.removeItem(momentDraftKey());
-  } catch (error) {
-    // Clearing draft is best-effort only.
-  }
+  browserStore.clearMomentDraft();
 }
 
 function createBrowserMoment(author, text, source = "manual", reason = "", imageData = "") {
@@ -2851,26 +2807,15 @@ async function loadWakeInbox() {
 }
 
 function browserWakeKey() {
-  return "stillgarden.wake.inbox";
+  return browserStore.browserWakeKey();
 }
 
 function readBrowserWakeInbox() {
-  try {
-    const entries = JSON.parse(window.localStorage.getItem(browserWakeKey()) || "[]");
-    return Array.isArray(entries) ? entries : [];
-  } catch (error) {
-    return [];
-  }
+  return browserStore.readBrowserWakeInbox();
 }
 
 function writeBrowserWakeDraft(record) {
-  const entries = [record, ...readBrowserWakeInbox()].slice(0, 500);
-  try {
-    window.localStorage.setItem(browserWakeKey(), JSON.stringify(entries));
-  } catch (error) {
-    // Current page still renders the generated draft.
-  }
-  return entries;
+  return browserStore.writeBrowserWakeDraft(record);
 }
 
 function chooseBrowserAutoWakeRoom() {
@@ -2891,30 +2836,7 @@ function chooseBrowserAutoWakeRoom() {
 }
 
 function updateBrowserWakeDraft(id, action) {
-  const entries = readBrowserWakeInbox();
-  const next = entries
-    .map((entry) => {
-      if (entry.id !== id) {
-        return entry;
-      }
-      if (action === "send_to_chat") {
-        return { ...entry, status: "sent_to_chat", sent_to_chat: true };
-      }
-      if (action === "keep") {
-        return { ...entry, status: "kept", kept: true };
-      }
-      if (action === "dismiss") {
-        return { ...entry, status: "dismissed", dismissed: true };
-      }
-      return entry;
-    })
-    .filter((entry) => entry.status !== "dismissed");
-  try {
-    window.localStorage.setItem(browserWakeKey(), JSON.stringify(next));
-  } catch (error) {
-    // Visible list still updates in memory.
-  }
-  return next;
+  return browserStore.updateBrowserWakeDraft(id, action);
 }
 
 async function handleWakeAction(id, action) {
@@ -3691,10 +3613,8 @@ async function clearCurrentChatScreen() {
   if (!ok) {
     return;
   }
-  try {
-    window.localStorage.removeItem(browserDraftKey(room));
-  } catch (error) {
-    // The visible screen can still be cleared even if localStorage is unavailable.
+  if (!browserStore.removeBrowserDraft(room)) {
+    // The visible screen can still be cleared even if browser storage is unavailable.
   }
   const slot = document.getElementById("savedDraftsSlot");
   if (slot) {
