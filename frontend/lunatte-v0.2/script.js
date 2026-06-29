@@ -15,6 +15,18 @@ const {
   normalizeUserProfile,
   normalizeSelfAccess,
   normalizeMomentsAutoComments,
+  formatNumber,
+  formatSessionTime,
+  formatConversationTime,
+  resultMeta,
+  createDraftRecord,
+  mergeDraftEntriesWithLimit,
+  mergeDraftEntries,
+  formatWakeText,
+  wakeJumpClientId,
+  formatPreviewItems,
+  formatContextPreview,
+  formatRequestPackage,
   createMomentEntry,
   applyMomentAction,
   mergeMomentEntries,
@@ -64,13 +76,6 @@ let profileAssetsLoaded = false;
 let profileAssetsSignature = "";
 
 
-
-function formatNumber(value) {
-  if (typeof value !== "number") {
-    return "...";
-  }
-  return new Intl.NumberFormat("zh-CN").format(value);
-}
 
 async function loadHomeStats() {
   const status = document.getElementById("homeStatus");
@@ -147,15 +152,6 @@ function startServiceHeartbeat() {
   serviceHeartbeatTimer = window.setInterval(loadServiceStatus, 3000);
 }
 
-function resultMeta(item) {
-  const bits = [];
-  if (item.source_index) bits.push(item.source_index);
-  if (item.date) bits.push(item.date);
-  if (item.phase) bits.push(item.phase);
-  if (item.flags?.length) bits.push(`标记：${item.flags.join(", ")}`);
-  return bits.join(" · ") || "索引结果";
-}
-
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -163,52 +159,6 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
-
-function formatSessionTime(value) {
-  if (!value) {
-    return "--:--";
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  const now = new Date();
-  const sameDay = date.toDateString() === now.toDateString();
-  const time = new Intl.DateTimeFormat("zh-CN", {
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(date);
-  if (sameDay) {
-    return `今天 ${time}`;
-  }
-  const day = new Intl.DateTimeFormat("zh-CN", {
-    month: "2-digit",
-    day: "2-digit"
-  }).format(date);
-  return `${day} ${time}`;
-}
-
-function formatConversationTime(value) {
-  if (!value) {
-    return "--:--";
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "--:--";
-  }
-  const now = new Date();
-  const sameDay = date.toDateString() === now.toDateString();
-  if (sameDay) {
-    return new Intl.DateTimeFormat("zh-CN", {
-      hour: "2-digit",
-      minute: "2-digit"
-    }).format(date);
-  }
-  return new Intl.DateTimeFormat("zh-CN", {
-    month: "2-digit",
-    day: "2-digit"
-  }).format(date);
 }
 
 function resizeChatDraftInput() {
@@ -886,18 +836,6 @@ function browserDraftKey(room) {
   return browserStore.browserDraftKey(room);
 }
 
-function makeDraftRecord(room, text, role = "user") {
-  return {
-    client_id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    timestamp: new Date().toISOString(),
-    room,
-    role,
-    text,
-    status: "draft_browser_cache",
-    archive_write: false
-  };
-}
-
 function readBrowserDrafts(room) {
   return browserStore.readBrowserDrafts(room);
 }
@@ -953,33 +891,12 @@ function applyChatPreferences(room = selectedChatRoom) {
 }
 
 function writeBrowserDraft(room, text) {
-  const record = makeDraftRecord(room, text);
+  const record = createDraftRecord(room, text);
   return writeBrowserEntry(room, record);
 }
 
 function writeBrowserEntry(room, record) {
   return browserStore.writeBrowserEntry(room, record);
-}
-
-function mergeDraftEntriesWithLimit(limit, ...groups) {
-  const seen = new Set();
-  return groups
-    .flat()
-    .filter(Boolean)
-    .filter((entry) => {
-      const key = entry.client_id || `${entry.room || ""}|${entry.timestamp || ""}|${entry.text || ""}`;
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    })
-    .sort((left, right) => new Date(left.timestamp || 0) - new Date(right.timestamp || 0))
-    .slice(-limit);
-}
-
-function mergeDraftEntries(...groups) {
-  return mergeDraftEntriesWithLimit(12, ...groups);
 }
 
 function updateConversationPreview(room, entries = readBrowserDrafts(room)) {
@@ -1485,19 +1402,6 @@ function openAppDialog({
   return new Promise((resolve) => {
     appDialogResolver = resolve;
   });
-}
-
-function formatWakeText(room, label, reason) {
-  if (room === "linxu") {
-    return "刚刚想到你，想问问你现在还好吗。";
-  }
-  if (room === "dengdeng") {
-    return "今天有没有什么小事想讲给我听？";
-  }
-  if (room === "aimas") {
-    return "我在这里，等你需要我的时候再展开。";
-  }
-  return "客厅灯开着。如果想让大家一起知道，可以把这件事放到这里。";
 }
 
 function showWakeNotice(message) {
@@ -2522,18 +2426,6 @@ async function handleMomentAction(id, action, options = {}) {
   }
 }
 
-function wakeJumpClientId(entry) {
-  if (entry.chat_record?.client_id) {
-    return entry.chat_record.client_id;
-  }
-  if (!entry.id) {
-    return "";
-  }
-  return String(entry.id).startsWith("wake-browser")
-    ? `${entry.id}-wake-browser`
-    : `${entry.id}-wake`;
-}
-
 function renderWakePagination(total, page, totalPages) {
   if (totalPages <= 1) {
     return `<div class="wake-page-note">共 ${total} 张，当前全部显示。</div>`;
@@ -2655,7 +2547,7 @@ async function handleWakeAction(id, action) {
     const entries = readBrowserWakeInbox();
     const match = entries.find((entry) => entry.id === id);
     if (action === "send_to_chat" && match) {
-      const record = makeDraftRecord(match.room, match.text, "assistant");
+      const record = createDraftRecord(match.room, match.text, "assistant");
       record.client_id = `${id}-wake-browser`;
       writeBrowserEntry(match.room, record);
       refreshConversationPreview(match.room);
@@ -3040,97 +2932,6 @@ function appendContextReceipt(currentText, title, data = {}) {
     `- 可见性说明：${isAgent ? "Aimas/Hermes 可能只把用户消息暴露给本体自省层；小窝这边已把上下文作为 system/request 层递出。" : "普通 provider 通常能同时接收 system、短期聊天和长期记忆候选。"}\n\n` +
     (preview ? `## 6. 实际调用回执里的上下文预览\n\n${preview}\n\n` : "") +
     (context ? `## 7. 这次随请求递出的长期记忆草稿\n\n${context}` : "## 7. 这次随请求递出的长期记忆草稿\n\n无。");
-}
-
-function formatPreviewItems(items = [], emptyText = "无。") {
-  if (!items.length) {
-    return `- ${emptyText}`;
-  }
-  return items
-    .slice(0, 6)
-    .map((item, index) => {
-      const meta = [
-        item.source_index || item.role || "",
-        item.date || item.timestamp || "",
-        item.phase || "",
-        item.flags?.length ? `标记：${item.flags.join(", ")}` : ""
-      ].filter(Boolean).join(" · ");
-      const text = item.summary || item.text || item.reference || "";
-      return `- ${index + 1}. ${item.title || item.role || "片段"}${meta ? `（${meta}）` : ""}${text ? `\n  ${text}` : ""}`;
-    })
-    .join("\n");
-}
-
-function formatContextPreview(preview = {}, includeRawHeader = true) {
-  const shortContext = preview.short_context || {};
-  const longTerm = preview.long_term || {};
-  const confirmed = preview.confirmed_memory || {};
-  const selfState = preview.self || {};
-  const policy = preview.policy || {};
-  const route = preview.route || {};
-  const selfReaders = selfState.readers || {};
-  const readableSelfNames = Object.entries(selfReaders)
-    .filter(([, enabled]) => enabled)
-    .map(([reader]) => selfReaderLabels[reader] || reader);
-  const shortItems = (shortContext.items || []).map((item) => ({
-    ...item,
-    title: item.role === "user" ? "你" : "对方",
-    role: item.role === "user" ? "你" : "对方"
-  }));
-  return [
-    `## A. 请求路线`,
-    `- 房间：${preview.room_label || preview.room || "未知"}`,
-    `- 检索目标：${preview.display || preview.target || "未知"}`,
-    `- 路线：${route.type || "unknown"} / ${route.route_id || "none"}`,
-    `- 当前消息：${preview.query || "无"}`,
-    ``,
-    `## B. 短期 session`,
-    `- 本次带入最近 ${shortContext.count || 0} / ${shortContext.window || 18} 条同房间聊天。`,
-    formatPreviewItems(shortItems, "这次没有旧的短期聊天。"),
-    ``,
-    `## C. 长期候选`,
-    `- 原始命中：${formatNumber(longTerm.raw_match_count || 0)}；折叠后：${formatNumber(longTerm.collapsed_match_count || 0)}；本次候选：${formatNumber(longTerm.candidate_count || 0)}。`,
-    formatPreviewItems(longTerm.items || [], "没有长期候选随请求带入。"),
-    ``,
-    `## D. 确认记忆`,
-    `- 本次命中确认记忆：${formatNumber(confirmed.candidate_count || 0)} 条。`,
-    formatPreviewItems(confirmed.items || [], "没有命中的确认记忆。"),
-    ``,
-    `## E. self 与敏感内容`,
-    `- self 总开关：${selfState.master_enabled ? "打开" : "关闭"}`,
-    `- self 可读对象：${readableSelfNames.length ? readableSelfNames.join("、") : "无"}`,
-    `- 本次是否带入 self：${selfState.enabled ? "是" : "否"}`,
-    `- 敏感标记：${policy.include_sensitive ? "允许包含" : "默认排除"}`,
-    `- self 文件状态：${(selfState.files || []).map((item) => `${item.path}${item.included ? " 已带入" : " 未带入"}`).join("；") || "无"}`,
-    ``,
-    `## F. 禁止读取`,
-    `${(policy.forbidden || []).slice(0, 8).map((item) => `- ${item}`).join("\n") || "- 无额外禁止列表。"}`
-  ];
-  if (includeRawHeader) {
-    lines.push("", "## G. 原始上下文全文");
-  }
-  return lines.join("\n");
-}
-
-function formatRequestPackage(data, profile, text) {
-  const routeType = data.record?.route?.type || "unknown";
-  const routeId = data.record?.route?.route_id || "none";
-  const shortText = text.length > 220 ? `${text.slice(0, 220)}...` : text;
-  const preview = data.context_preview ? formatContextPreview(data.context_preview) : "";
-  return `# 上下文颗粒度检查单\n\n` +
-    `# 1. 你在聊天框实际发出的内容\n\n` +
-    `${shortText}\n\n` +
-    `# 2. 小窝本地保存\n\n` +
-    `- 当前 session：${profile.name}\n` +
-    `- session 日志：已先把这条消息写入当前房间 JSONL，所以本轮第一条消息也会参与请求包\n` +
-    `- 请求包保存位置：${data.relative_path || "未写入"}\n\n` +
-    `# 3. 小窝准备的请求包\n\n` +
-    `- 状态：请求包已写入；配置齐全时继续调用真实 API / Agent\n` +
-    `- 路线：${routeType} / ${routeId}\n` +
-    `- 时机：不是进房间前预热，而是发送后按“当前消息 + 同房间最近记录 + 命中的长期候选”组包\n` +
-    `- 说明：聊天框里能看见的是第 1 层；模型/Agent 是否能利用下面的上下文，取决于 provider 或 Hermes 中间层怎么转交。\n\n` +
-    `${preview ? `# 4. 本次准备带入的上下文预览\n\n${preview}\n\n` : ""}` +
-    `${data.markdown || data.message || "没有生成上下文。"}`;
 }
 
 async function renderChatProfile(key) {
