@@ -15,6 +15,14 @@ const {
   normalizeUserProfile,
   normalizeSelfAccess,
   normalizeMomentsAutoComments,
+  createMomentEntry,
+  applyMomentAction,
+  mergeMomentEntries,
+  momentEntriesSignature,
+  timelineTypeLabel,
+  timelineMatchesPerson,
+  timelineMatchesSource,
+  timelineFilterLabel,
   createBrowserStorage
 } = window.LunatteCore;
 
@@ -1639,51 +1647,28 @@ function clearMomentDraft() {
 }
 
 function createBrowserMoment(author, text, source = "manual", reason = "", imageData = "") {
-  const post = {
-    id: `moment-browser-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    timestamp: new Date().toISOString(),
+  const post = createMomentEntry({
     author,
-    author_label: momentDisplayName(author),
+    authorLabel: momentDisplayName(author),
     text,
-    image_data: imageData,
+    imageData,
     source,
-    reason,
-    likes: [],
-    comments: []
-  };
+    reason
+  });
   const entries = [post, ...readBrowserMoments()];
   writeBrowserMoments(entries);
   return entries;
 }
 
 function updateBrowserMoment(id, action, text = "", author = "me", replyTo = "") {
-  const entries = readBrowserMoments().map((entry) => {
-    if (entry.id !== id) {
-      return entry;
-    }
-    if (action === "like") {
-      const likes = entry.likes?.includes("你") ? entry.likes : [...(entry.likes || []), "你"];
-      return { ...entry, likes };
-    }
-    if (action === "unlike") {
-      return { ...entry, likes: (entry.likes || []).filter((name) => name !== "你") };
-    }
-    if (action === "comment") {
-      const comment = {
-        id: `comment-browser-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        timestamp: new Date().toISOString(),
-        author,
-        author_label: momentDisplayName(author),
-        text,
-        reply_to: replyTo
-      };
-      return { ...entry, comments: [...(entry.comments || []), comment] };
-    }
-    if (action === "delete_comment") {
-      return { ...entry, comments: (entry.comments || []).filter((comment) => comment.id !== text) };
-    }
-    return entry;
-  }).filter((entry) => !(entry.id === id && action === "delete_post"));
+  const entries = applyMomentAction(readBrowserMoments(), {
+    id,
+    action,
+    text,
+    author,
+    authorLabel: momentDisplayName(author),
+    replyTo
+  });
   writeBrowserMoments(entries);
   return entries;
 }
@@ -1733,23 +1718,6 @@ function renderMomentCommentText(comment = {}) {
     return `<strong>${escapeHtml(parts.author)}</strong><em>回复</em><strong>${escapeHtml(parts.replyTo)}</strong><b>：</b>${escapeHtml(parts.text)}`;
   }
   return `<strong>${escapeHtml(parts.author)}：</strong>${escapeHtml(parts.text)}`;
-}
-
-function momentEntriesSignature(entries = latestMomentEntries) {
-  return JSON.stringify((entries || []).map((entry) => ({
-    id: entry.id,
-    timestamp: entry.timestamp,
-    author: entry.author,
-    text: entry.text,
-    image: Boolean(entry.image_data || entry.image),
-    likes: entry.likes || [],
-    comments: (entry.comments || []).map((comment) => ({
-      id: comment.id,
-      author: comment.author,
-      text: comment.text,
-      reply_to: comment.reply_to || comment.replyTo || ""
-    }))
-  })));
 }
 
 function isMomentInteractionActive() {
@@ -2135,83 +2103,9 @@ async function loadMoments(options = {}) {
   }
 }
 
-function mergeMomentEntries(...groups) {
-  const seen = new Set();
-  return groups
-    .flat()
-    .filter(Boolean)
-    .filter((entry) => {
-      const key = entry.id || `${entry.timestamp}|${entry.author}|${entry.text}`;
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    })
-    .sort((left, right) => new Date(right.timestamp || 0) - new Date(left.timestamp || 0));
-}
-
-function timelineTypeLabel(type = "") {
-  return {
-    chat_message: "聊天",
-    moment_post: "圈圈",
-    moment_comment: "评论",
-    confirmed_memory: "确认记忆"
-  }[type] || "事件";
-}
-
-function timelineMatchesPerson(entry = {}, person = currentTimelinePerson) {
-  if (person === "all") {
-    return true;
-  }
-  if (person === "me") {
-    return entry.actor === "me" || entry.actor_label === momentAuthors.me || entry.role === "user";
-  }
-  if (["linxu", "dengdeng", "aimas"].includes(person)) {
-    return entry.room === person || entry.actor === person;
-  }
-  return true;
-}
-
-function timelineMatchesSource(entry = {}, source = currentTimelineSource) {
-  if (source === "all") {
-    return true;
-  }
-  if (source === "chat") {
-    return entry.type === "chat_message" || entry.source === "session";
-  }
-  if (source === "moments") {
-    return entry.type === "moment_post";
-  }
-  if (source === "comments") {
-    return entry.type === "moment_comment";
-  }
-  if (source === "archive") {
-    return entry.source === "archive" || entry.type === "confirmed_memory";
-  }
-  return true;
-}
-
 function timelineMatchesFilter(entry = {}) {
-  return timelineMatchesPerson(entry) && timelineMatchesSource(entry);
-}
-
-function timelineFilterLabel() {
-  const personLabels = {
-    all: "所有人",
-    me: "我",
-    linxu: "林絮",
-    dengdeng: "噔噔",
-    aimas: "Aimas"
-  };
-  const sourceLabels = {
-    all: "全部来源",
-    chat: "聊天",
-    moments: "圈圈",
-    comments: "评论",
-    archive: "Archive"
-  };
-  return `${personLabels[currentTimelinePerson] || "所有人"} · ${sourceLabels[currentTimelineSource] || "全部来源"}`;
+  return timelineMatchesPerson(entry, currentTimelinePerson, { meLabel: momentAuthors.me })
+    && timelineMatchesSource(entry, currentTimelineSource);
 }
 
 function renderTimelineEvents() {
@@ -2230,7 +2124,7 @@ function renderTimelineEvents() {
   const entries = filteredEntries.slice(start, start + timelinePageSize);
   if (statusNode) {
     statusNode.textContent = timelineEntries.length
-      ? `已读取 ${timelineEntries.length} 条，${timelineFilterLabel()}：${filteredEntries.length} 条。`
+      ? `已读取 ${timelineEntries.length} 条，${timelineFilterLabel(currentTimelinePerson, currentTimelineSource)}：${filteredEntries.length} 条。`
       : "时间线会只读聚合聊天、圈圈、评论和确认记忆。";
   }
   if (pageLabel) {

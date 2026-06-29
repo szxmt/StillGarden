@@ -288,6 +288,148 @@ chatProfiles.aimas.order = 3;
     };
   }
 
+  function createMomentEntry(options = {}) {
+    const author = options.author || "me";
+    return {
+      id: options.id || `moment-browser-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      timestamp: options.timestamp || new Date().toISOString(),
+      author,
+      author_label: options.authorLabel || options.author_label || author,
+      text: options.text || "",
+      image_data: options.imageData || options.image_data || "",
+      source: options.source || "manual",
+      reason: options.reason || "",
+      likes: [],
+      comments: []
+    };
+  }
+
+  function applyMomentAction(entries = [], options = {}) {
+    const id = options.id || "";
+    const action = options.action || "";
+    return (entries || [])
+      .map((entry) => {
+        if (entry.id !== id) {
+          return entry;
+        }
+        if (action === "like") {
+          const likes = entry.likes?.includes("你") ? entry.likes : [...(entry.likes || []), "你"];
+          return { ...entry, likes };
+        }
+        if (action === "unlike") {
+          return { ...entry, likes: (entry.likes || []).filter((name) => name !== "你") };
+        }
+        if (action === "comment") {
+          const comment = {
+            id: options.commentId || `comment-browser-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+            timestamp: options.timestamp || new Date().toISOString(),
+            author: options.author || "me",
+            author_label: options.authorLabel || options.author_label || options.author || "me",
+            text: options.text || "",
+            reply_to: options.replyTo || options.reply_to || ""
+          };
+          return { ...entry, comments: [...(entry.comments || []), comment] };
+        }
+        if (action === "delete_comment") {
+          return { ...entry, comments: (entry.comments || []).filter((comment) => comment.id !== options.text) };
+        }
+        return entry;
+      })
+      .filter((entry) => !(entry.id === id && action === "delete_post"));
+  }
+
+  function mergeMomentEntries(...groups) {
+    const seen = new Set();
+    return groups
+      .flat()
+      .filter(Boolean)
+      .filter((entry) => {
+        const key = entry.id || `${entry.timestamp}|${entry.author}|${entry.text}`;
+        if (seen.has(key)) {
+          return false;
+        }
+        seen.add(key);
+        return true;
+      })
+      .sort((left, right) => new Date(right.timestamp || 0) - new Date(left.timestamp || 0));
+  }
+
+  function momentEntriesSignature(entries = []) {
+    return JSON.stringify((entries || []).map((entry) => ({
+      id: entry.id,
+      timestamp: entry.timestamp,
+      author: entry.author,
+      text: entry.text,
+      image: Boolean(entry.image_data || entry.image),
+      likes: entry.likes || [],
+      comments: (entry.comments || []).map((comment) => ({
+        id: comment.id,
+        author: comment.author,
+        text: comment.text,
+        reply_to: comment.reply_to || comment.replyTo || ""
+      }))
+    })));
+  }
+
+  function timelineTypeLabel(type = "") {
+    return {
+      chat_message: "聊天",
+      moment_post: "圈圈",
+      moment_comment: "评论",
+      confirmed_memory: "确认记忆"
+    }[type] || "事件";
+  }
+
+  function timelineMatchesPerson(entry = {}, person = "all", options = {}) {
+    if (person === "all") {
+      return true;
+    }
+    if (person === "me") {
+      return entry.actor === "me" || entry.actor_label === options.meLabel || entry.role === "user";
+    }
+    if (["linxu", "dengdeng", "aimas"].includes(person)) {
+      return entry.room === person || entry.actor === person;
+    }
+    return true;
+  }
+
+  function timelineMatchesSource(entry = {}, source = "all") {
+    if (source === "all") {
+      return true;
+    }
+    if (source === "chat") {
+      return entry.type === "chat_message" || entry.source === "session";
+    }
+    if (source === "moments") {
+      return entry.type === "moment_post";
+    }
+    if (source === "comments") {
+      return entry.type === "moment_comment";
+    }
+    if (source === "archive") {
+      return entry.source === "archive" || entry.type === "confirmed_memory";
+    }
+    return true;
+  }
+
+  function timelineFilterLabel(person = "all", source = "all") {
+    const personLabels = {
+      all: "所有人",
+      me: "我",
+      linxu: "林絮",
+      dengdeng: "噔噔",
+      aimas: "Aimas"
+    };
+    const sourceLabels = {
+      all: "全部来源",
+      chat: "聊天",
+      moments: "圈圈",
+      comments: "评论",
+      archive: "Archive"
+    };
+    return `${personLabels[person] || "所有人"} · ${sourceLabels[source] || "全部来源"}`;
+  }
+
   function createApiClient(options = {}) {
     const fetchImpl = options.fetchImpl || global.fetch?.bind(global);
     const isOnline = options.isOnline || (() => true);
@@ -504,6 +646,14 @@ chatProfiles.aimas.order = 3;
     normalizeUserProfile,
     normalizeSelfAccess,
     normalizeMomentsAutoComments,
+    createMomentEntry,
+    applyMomentAction,
+    mergeMomentEntries,
+    momentEntriesSignature,
+    timelineTypeLabel,
+    timelineMatchesPerson,
+    timelineMatchesSource,
+    timelineFilterLabel,
     createBrowserStorage,
     createApiClient
   };
