@@ -151,6 +151,7 @@ docs\imported-antigravity
 - CSS 第一轮可收口：主题 token / 基础层 / 页面模块已经拆出，页面 CSS 不需要为每套主题重写。
 - JS 第一轮可收口：纯工具、配置、请求封装、状态读写等复用逻辑已离开 Web DOM 层。
 - 后端第一轮可收口：JSON / JSONL、secrets、profile assets、prototype 图片资产和统一 append 逻辑已进入 storage 层。
+- 剩余拆分计划维护在 `docs/v0.2-next-actions.md` 的“剩余拆分计划”小节；后续功能推进前先看对应 JS / Python / CSS 门槛，避免继续把新逻辑堆回大文件。
 
 下一步：
 

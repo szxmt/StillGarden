@@ -71,6 +71,7 @@
 - CSS 结构：`styles.css` 只保留模块入口，实际样式拆到 `css/00-tokens.css`、`css/00-foundation.css`、`css/10-home-rooms.css`、`css/20-chat-profile-dialogs.css`、`css/30-archive-timeline.css`、`css/40-subpages-settings.css`、`css/50-moments-wake.css`、`css/60-config-dock-responsive.css`。
 - JS 结构：`script.js` 仍是 Web DOM 入口，通用 token、配置、请求、状态读写、格式化和纯数据 helper 已抽到 `shared/lunatte-core.js`。
 - 后端结构：`server.py` 仍是 HTTP 入口，路径/默认配置在 `server_config.py`，JSON / JSONL / secrets / profile assets / prototype assets 存储 helper 在 `server_storage.py`。
+- 剩余拆分计划：详见根目录 `docs/v0.2-next-actions.md` 的“剩余拆分计划”；后续做 Archive 审计、Timeline/SQLite、Moments 自动触发、人格/RAG 或大页面 UI 时，先按对应门槛拆 service/controller，不能继续往单文件堆。
 
 ## 雏形 / 入口
 
