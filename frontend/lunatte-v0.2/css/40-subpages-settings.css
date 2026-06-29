@@ -26,13 +26,13 @@
   z-index: 4;
   inset: 0;
   display: block;
-  margin: 0;
-  padding: 82px 18px 22px;
+  margin: var(--space-0);
+  padding: var(--space-82) var(--space-18) var(--space-22);
   overflow: hidden auto;
   border: 0;
   border-radius: inherit;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 246, 250, 0.76)),
+    linear-gradient(180deg, var(--surface-white-90), var(--raw-raw-rgba-255-246-250-0-76)),
     var(--paper);
   box-shadow: none;
   scrollbar-width: none;
@@ -70,10 +70,10 @@
   display: none;
   min-height: 66px;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(182, 117, 145, 0.14);
-  background: rgba(255, 255, 255, 0.72);
+  gap: var(--space-10);
+  padding: var(--space-12) var(--space-16);
+  border-bottom: 1px solid var(--line-14);
+  background: var(--surface-white-72);
   backdrop-filter: blur(18px);
 }
 
@@ -82,10 +82,10 @@
   width: 34px;
   height: 34px;
   place-items: center;
-  padding: 0;
-  color: #8a5870;
+  padding: var(--space-0);
+  color: var(--text-soft);
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: transparent;
   box-shadow: none;
   font-size: 1.55rem;
@@ -104,7 +104,7 @@
 
 .subpage-title {
   min-width: 0;
-  color: #7b415c;
+  color: var(--text-strong);
   font-family: var(--serif);
   font-size: 1.02rem;
   overflow: hidden;
@@ -114,22 +114,22 @@
 
 .moment-subpage-appbar {
   border-bottom: 0;
-  background: linear-gradient(180deg, rgba(125, 75, 98, 0.18), rgba(255, 255, 255, 0));
+  background: linear-gradient(180deg, var(--raw-raw-rgba-125-75-98-0-18), var(--raw-raw-rgba-255-255-255-0));
   backdrop-filter: none;
   pointer-events: none;
 }
 
 .moment-subpage-appbar .subpage-back {
-  color: #fff;
-  background: rgba(110, 65, 88, 0.18);
-  box-shadow: 0 10px 26px rgba(127, 73, 101, 0.12);
+  color: var(--raw-hex-fff);
+  background: var(--raw-raw-rgba-110-65-88-0-18);
+  box-shadow: 0 10px 26px var(--raw-raw-rgba-127-73-101-0-12);
   backdrop-filter: blur(14px);
   pointer-events: auto;
 }
 
 .moment-subpage-appbar .subpage-title {
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 8px rgba(88, 44, 68, 0.2);
+  color: var(--raw-raw-rgba-255-255-255-0-92);
+  text-shadow: 0 1px 8px var(--raw-raw-rgba-88-44-68-0-2);
 }
 
 .phone-card.subpage-open > .subpage-appbar {
@@ -141,7 +141,7 @@
 }
 
 #momentsPanel.subpage-panel.active-subpage {
-  padding: 0 0 22px;
+  padding: 0 0 var(--space-22);
 }
 
 #momentsPanel.subpage-panel.active-subpage > :not(summary) {
@@ -155,7 +155,7 @@
 
 .fold-card {
   display: block;
-  padding: 0;
+  padding: var(--space-0);
   overflow: hidden;
 }
 
@@ -176,8 +176,8 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 12px;
-  padding: 18px 20px;
+  gap: var(--space-12);
+  padding: var(--space-18) var(--space-20);
   cursor: pointer;
   list-style: none;
 }
@@ -190,11 +190,11 @@
   content: "展开";
   grid-column: 2;
   grid-row: 1 / span 2;
-  padding: 5px 10px;
-  color: #8a5870;
-  border: 1px solid rgba(182, 117, 145, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.58);
+  padding: var(--space-5) var(--space-10);
+  color: var(--text-soft);
+  border: 1px solid var(--line-18);
+  border-radius: var(--radius-pill);
+  background: var(--surface-white-58);
   font-size: 0.72rem;
 }
 
@@ -203,7 +203,7 @@
 }
 
 .fold-card[open] > summary {
-  border-bottom: 1px solid rgba(182, 117, 145, 0.12);
+  border-bottom: 1px solid var(--line-12);
 }
 
 .fold-card > summary span {
@@ -216,7 +216,7 @@
 
 .fold-card > summary strong {
   grid-column: 1;
-  color: #7b415c;
+  color: var(--text-strong);
   font-family: var(--serif);
   font-size: 1.04rem;
   font-weight: 500;
@@ -242,7 +242,7 @@
 
 .api-config-card {
   display: grid;
-  gap: 13px;
+  gap: var(--space-13);
   margin-top: 16px;
 }
 
@@ -278,10 +278,10 @@
 
 .wake-controls,
 .wake-cardlet {
-  padding: 18px;
+  padding: var(--space-18);
   border: 1px solid var(--line);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.54);
+  border-radius: var(--radius-card);
+  background: var(--raw-raw-rgba-255-255-255-0-54);
 }
 
 .wake-cardlet span,
@@ -295,22 +295,22 @@
 .wake-index {
   display: block;
   margin-top: 5px;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-serif-latin);
   letter-spacing: 0.1em;
 }
 
 .wake-cardlet strong {
   display: block;
-  margin: 8px 0;
-  color: #7b415c;
+  margin: var(--space-8) 0;
+  color: var(--text-strong);
   font-family: var(--serif);
   font-size: 1.2rem;
   font-weight: 500;
 }
 
 .wake-cardlet p {
-  margin: 0;
-  color: #79636f;
+  margin: var(--space-0);
+  color: var(--raw-hex-79636f);
   line-height: 1.7;
 }
 
