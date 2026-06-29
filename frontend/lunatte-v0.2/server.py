@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import base64
 import difflib
 import mimetypes
 import os
@@ -14,7 +13,7 @@ import urllib.request
 import uuid
 import webbrowser
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
@@ -38,160 +37,21 @@ from server_config import (
     outbox_path,
     profile_assets_path,
     prototype_assets_root,
-    secrets_path,
     session_log_path,
     wake_inbox_path,
 )
-
-
-def read_secrets() -> dict:
-    path = secrets_path()
-    if not path.is_file():
-        return {}
-    try:
-        with path.open("r", encoding="utf-8") as handle:
-            data = json.load(handle)
-        return data if isinstance(data, dict) else {}
-    except (OSError, json.JSONDecodeError):
-        return {}
-
-
-def write_secrets(data: dict) -> None:
-    path = secrets_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(data, handle, ensure_ascii=False, indent=2)
-        handle.write("\n")
-
-
-def read_profile_assets() -> dict:
-    path = profile_assets_path()
-    if not path.is_file():
-        return {}
-    try:
-        with path.open("r", encoding="utf-8") as handle:
-            data = json.load(handle)
-        return data if isinstance(data, dict) else {}
-    except (OSError, json.JSONDecodeError):
-        return {}
-
-
-def write_profile_assets(data: dict) -> None:
-    path = profile_assets_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(data, handle, ensure_ascii=False, indent=2)
-        handle.write("\n")
-
-
-def flatten_profile_assets(data: dict) -> dict:
-    result: dict[str, dict[str, str]] = {}
-    for room, assets in data.items():
-        if not isinstance(assets, dict):
-            continue
-        result[str(room)] = {
-            str(kind): str(info.get("url", ""))
-            for kind, info in assets.items()
-            if isinstance(info, dict) and info.get("url")
-        }
-    return result
-
-
-def decode_image_data_url(data_url: str, max_bytes: int = 8_000_000) -> tuple[str, bytes, str] | None:
-    match = re.match(r"^data:(image/(png|jpeg|jpg|webp|gif));base64,(.+)$", str(data_url or ""), re.S)
-    if not match:
-        return None
-    mime_type = match.group(1)
-    try:
-        raw = base64.b64decode(match.group(3), validate=True)
-    except Exception:
-        return None
-    if len(raw) > max_bytes:
-        limit_mb = max(1, max_bytes // 1_000_000)
-        raise ValueError(f"图片太大，先选 {limit_mb}MB 以下的小图。")
-    ext = {
-        "image/png": ".png",
-        "image/jpeg": ".jpg",
-        "image/jpg": ".jpg",
-        "image/webp": ".webp",
-        "image/gif": ".gif",
-    }.get(mime_type, ".img")
-    return mime_type, raw, ext
-
-
-def write_prototype_image_asset(folder_name: str, prefix: str, data_url: str, max_bytes: int = 8_000_000) -> dict:
-    decoded = decode_image_data_url(data_url, max_bytes=max_bytes)
-    if not decoded:
-        return {"ok": False, "message": "图片格式不正确。"}
-    mime_type, raw, ext = decoded
-    folder = prototype_assets_root() / folder_name
-    folder.mkdir(parents=True, exist_ok=True)
-    safe_prefix = re.sub(r"[^a-zA-Z0-9_-]+", "-", prefix).strip("-") or "asset"
-    filename = f"{safe_prefix}-{int(datetime.now(timezone.utc).timestamp() * 1000)}-{uuid.uuid4().hex[:8]}{ext}"
-    file_path = folder / filename
-    file_path.write_bytes(raw)
-    return {
-        "ok": True,
-        "url": f"/assets/prototype/{quote(folder_name)}/{quote(filename)}",
-        "relative_path": str(file_path.relative_to(find_vault_root())),
-        "mime_type": mime_type,
-    }
-
-
-def save_profile_asset(data: dict) -> dict:
-    room = str(data.get("room", "linxu")).strip()
-    if room not in {"me", "linxu", "dengdeng", "aimas", "living"}:
-        room = "linxu"
-    kind = str(data.get("kind", "")).strip()
-    if kind not in {"avatar", "background", "chat_background", "moment_background"}:
-        return {"ok": False, "message": "资产类型不支持。"}
-    try:
-        saved = write_prototype_image_asset("profile", f"{room}-{kind}", str(data.get("data_url", "")))
-    except ValueError as error:
-        return {"ok": False, "message": str(error)}
-    if not saved.get("ok"):
-        return saved
-    manifest = read_profile_assets()
-    room_assets = manifest.get(room)
-    if not isinstance(room_assets, dict):
-        room_assets = {}
-    room_assets[kind] = {
-        "url": saved["url"],
-        "relative_path": saved["relative_path"],
-        "mime_type": saved["mime_type"],
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-    }
-    manifest[room] = room_assets
-    write_profile_assets(manifest)
-    return {
-        "ok": True,
-        "url": room_assets[kind]["url"],
-        "relative_path": room_assets[kind]["relative_path"],
-        "assets": flatten_profile_assets(manifest),
-        "manifest_path": str(profile_assets_path().relative_to(find_vault_root())),
-    }
-
-
-def clear_profile_assets(data: dict) -> dict:
-    room = str(data.get("room", "linxu")).strip()
-    if room not in {"me", "linxu", "dengdeng", "aimas", "living"}:
-        room = "linxu"
-    kinds = data.get("kinds")
-    if not isinstance(kinds, list):
-        kinds = ["avatar", "background"]
-    clean_kinds = {str(kind) for kind in kinds if str(kind) in {"avatar", "background", "chat_background", "moment_background"}}
-    manifest = read_profile_assets()
-    if room in manifest and isinstance(manifest[room], dict):
-        for kind in clean_kinds:
-            manifest[room].pop(kind, None)
-        if not manifest[room]:
-            manifest.pop(room, None)
-    write_profile_assets(manifest)
-    return {
-        "ok": True,
-        "assets": flatten_profile_assets(manifest),
-        "manifest_path": str(profile_assets_path().relative_to(find_vault_root())),
-    }
+from server_storage import (
+    append_jsonl,
+    clear_profile_assets,
+    flatten_profile_assets,
+    read_jsonl_events,
+    read_profile_assets,
+    read_secrets,
+    save_profile_asset,
+    write_json_dict,
+    write_prototype_image_asset,
+    write_secrets,
+)
 
 
 def provider_secret_key(provider_id: str) -> str:
@@ -429,7 +289,6 @@ def read_config() -> dict:
 
 def write_config(data: dict) -> dict:
     path = config_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
     config = read_config()
     if data.get("create_custom_provider"):
         if isinstance(data.get("custom_providers"), list):
@@ -504,9 +363,7 @@ def write_config(data: dict) -> dict:
     config["agent_connectors"]["aimas"]["key_saved"] = key_saved
     config["agent_connectors"]["aimas"]["allow_network"] = False
     config["updated_at"] = datetime.now().astimezone().isoformat(timespec="seconds")
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(config, handle, ensure_ascii=False, indent=2)
-        handle.write("\n")
+    write_json_dict(path, config)
     return {
         "ok": True,
         "config": config,
@@ -1037,7 +894,6 @@ def append_session_log(room: str, text: str, client_id: str | None = None, role:
     safe_role = role if role in {"user", "assistant", "system"} else "user"
 
     path = session_log_path(safe_room)
-    path.parent.mkdir(parents=True, exist_ok=True)
     record = {
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
         "room": safe_room,
@@ -1049,8 +905,7 @@ def append_session_log(room: str, text: str, client_id: str | None = None, role:
     }
     if client_id:
         record["client_id"] = client_id[:80]
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    append_jsonl(path, record)
     return {
         "ok": True,
         "room": safe_room,
@@ -1068,7 +923,6 @@ def append_chat_package(room: str, text: str, client_id: str | None = None) -> d
     context = build_context(safe_room, clean_text)
     short_context = recent_session_messages(safe_room, exclude_client_id=client_id, limit=18)
     path = outbox_path(safe_room)
-    path.parent.mkdir(parents=True, exist_ok=True)
     config = read_config()
     route = route_for_room(safe_room, config)
     context_preview = build_context_preview(safe_room, clean_text, context, short_context, route)
@@ -1087,8 +941,7 @@ def append_chat_package(room: str, text: str, client_id: str | None = None) -> d
         "archive_write": False,
         "privacy_rule": "Use only this room's allowed context. Do not read private rooms unless explicitly allowed.",
     }
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    append_jsonl(path, record)
     return {
         "ok": True,
         "room": safe_room,
@@ -1193,20 +1046,6 @@ def readable_scope_targets(scope: str, room: str) -> list[str]:
     return [safe_room]
 
 
-def read_jsonl_events(path: Path, limit: int = 50) -> list[dict]:
-    entries: deque[dict] = deque(maxlen=max(1, min(limit, 1000)))
-    if path.is_file():
-        with path.open("r", encoding="utf-8", errors="ignore") as handle:
-            for line in handle:
-                if not line.strip():
-                    continue
-                try:
-                    entries.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue
-    return list(entries)
-
-
 def clean_memory_text(value: str, limit: int = 4000) -> str:
     text = str(value or "").strip()
     text = "\n".join(line.rstrip() for line in text.splitlines()).strip()
@@ -1266,7 +1105,6 @@ def build_daily_summary_candidate(room: str, date_value: str | None = None) -> d
     title = f"{label} {day} 日摘要"
     text = summarize_session_entries(entries, label)
     path = memory_candidate_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
     record = {
         "id": f"memcand-{datetime.now().strftime('%Y%m%d%H%M%S%f')}-{uuid.uuid4().hex[:8]}",
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -1281,8 +1119,7 @@ def build_daily_summary_candidate(room: str, date_value: str | None = None) -> d
         "archive_write": False,
         "confirmed": False,
     }
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    append_jsonl(path, record)
     return {
         "ok": True,
         "record": record,
@@ -1317,7 +1154,6 @@ def confirm_memory(data: dict) -> dict:
     day = clean_memory_text(str(data.get("date", "")), 20)[:10] or now.date().isoformat()
     memory_id = f"mem-{now.strftime('%Y%m%d%H%M%S%f')}-{uuid.uuid4().hex[:8]}"
     path = confirmed_memory_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
     record = {
         "memory_id": memory_id,
         "conversation_id": memory_id,
@@ -1343,8 +1179,7 @@ def confirm_memory(data: dict) -> dict:
         "privacy_rule": readable_scope_rule(readable_scope, safe_room),
         "room_privacy_rule": room_privacy_rule(safe_room),
     }
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    append_jsonl(path, record)
 
     if candidate_id:
         candidate_patch = {
@@ -1354,8 +1189,7 @@ def confirm_memory(data: dict) -> dict:
             "confirmed": True,
             "memory_id": memory_id,
         }
-        with memory_candidate_path().open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(candidate_patch, ensure_ascii=False) + "\n")
+        append_jsonl(memory_candidate_path(), candidate_patch)
 
     return {
         "ok": True,
@@ -1392,7 +1226,6 @@ def create_wake_draft(room: str, reason: str, source: str = "manual", trigger: s
     clean_reason = reason.strip()[:120] or "想轻轻问候一下"
     safe_source = source if source in {"manual", "auto"} else "manual"
     path = wake_inbox_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
     record = {
         "id": f"wake-{datetime.now().strftime('%Y%m%d%H%M%S%f')}-{uuid.uuid4().hex[:8]}",
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -1408,8 +1241,7 @@ def create_wake_draft(room: str, reason: str, source: str = "manual", trigger: s
         "tool_allowed": False,
         "archive_write": False,
     }
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    append_jsonl(path, record)
     return {
         "ok": True,
         "record": record,
@@ -1513,9 +1345,7 @@ def update_wake_draft(wake_id: str, action: str) -> dict:
         patch["dismissed"] = True
 
     path = wake_inbox_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(patch, ensure_ascii=False) + "\n")
+    append_jsonl(path, patch)
     updated = dict(match)
     updated.update(patch)
     return {
@@ -1786,9 +1616,7 @@ def create_moment(data: dict) -> dict:
         event["image_data"] = saved_image["url"]
         event["image_relative_path"] = saved_image["relative_path"]
     path = moments_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(event, ensure_ascii=False) + "\n")
+    append_jsonl(path, event)
     return read_moments(80) | {"ok": True, "created": event}
 
 
@@ -2093,9 +1921,7 @@ def update_moment(data: dict) -> dict:
             return {"ok": False, "message": "缺少要删除的评论。"}
         event["comment_id"] = comment_id
     path = moments_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(event, ensure_ascii=False) + "\n")
+    append_jsonl(path, event)
     return read_moments(80) | {"ok": True, "event": event}
 
 
