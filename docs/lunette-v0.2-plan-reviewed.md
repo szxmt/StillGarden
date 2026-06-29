@@ -143,8 +143,8 @@ memory-vault-starter/
   - `reset.css`
   - `../styles.css`
   - `components.css`
-- JS 没有真正模块化拆分，仍主要集中在 `script.js`。
-- `server.py` 没有真正拆分。
+- 历史审计结论：当时 JS 没有真正模块化拆分，仍主要集中在 `script.js`；截至 2026-06-30，V0.2 已抽出 `shared/lunatte-core.js`。
+- 历史审计结论：当时 `server.py` 没有真正拆分；截至 2026-06-30，V0.2 已抽出 `server_config.py` 和 `server_storage.py`。
 - 没有稳定的 `apps/`、`packages/`、`src/components/`、`modules/` 架构。
 - 包含当前 V0.1 的后续功能痕迹，也包含实验性 UI/refactor 内容。
 

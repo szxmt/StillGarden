@@ -16,7 +16,7 @@ D:\A月亮啊\lunette-v0.2
 
 ## 当前阶段
 
-当前阶段：V0.2 初始化完成，准备进入选择性结构清理。
+当前阶段：V0.2 初始化完成，CSS / JS / 后端第一轮结构清理已落地，可以继续功能开发。
 
 原则：
 
@@ -70,9 +70,9 @@ start-stillgarden.ps1
 
 当前形态：
 
-- CSS 仍以 `styles.css` 为运行入口。
-- JS 仍以 `script.js` 为运行入口。
-- 后端仍以 `server.py` 为运行入口。
+- CSS 以 `styles.css` 为运行入口，实际样式已拆到 `frontend/lunatte-v0.2/css/` 下的 token、foundation、页面和组件模块。
+- JS 以 `script.js` 为 Web 入口，已抽出可复用底层到 `frontend/lunatte-v0.2/shared/lunatte-core.js`。
+- 后端以 `server.py` 为运行入口，已抽出配置/路径层 `server_config.py` 和存储层 `server_storage.py`。
 
 ## 启动方式
 
@@ -146,12 +146,18 @@ docs\imported-antigravity
 
 ## 下一步
 
-下一步进入 Phase 2：
+当前拆分状态：
 
-1. 审计 Antigravity 的 CSS 拆分。
-2. 选择性合并可用的 CSS 结构。
-3. 保持当前 V0.2 功能链路可运行。
-4. 每一步合并都单独提交，便于回滚。
+- CSS 第一轮可收口：主题 token / 基础层 / 页面模块已经拆出，页面 CSS 不需要为每套主题重写。
+- JS 第一轮可收口：纯工具、配置、请求封装、状态读写等复用逻辑已离开 Web DOM 层。
+- 后端第一轮可收口：JSON / JSONL、secrets、profile assets、prototype 图片资产和统一 append 逻辑已进入 storage 层。
+
+下一步：
+
+1. 继续具体功能开发时，按功能补小范围模块，不再为了“拆分本身”继续无限小刀。
+2. Archive 确认记忆编辑 / 撤回 / 删除 / 权限审计可以进入实现设计。
+3. SQLite + FTS5 仍只做草图，不直接迁移 JSONL。
+4. 每一步功能合并都单独提交，便于回滚。
 
 详细计划见：
 

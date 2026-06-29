@@ -1,7 +1,7 @@
 # 月亮小窝 Stillgarden 原型状态板
 
 这是一个本地小窝原型：前端是手机壳 UI，后端是本地 Python 小服务。  
-当前快照：2026-06-22 10:37
+当前快照：2026-06-30
 
 ## 进度口径
 
@@ -21,11 +21,11 @@
 
 ## 当前状态
 
-- 基础检查：`script.js` 语法检查通过，`server.py` 编译检查通过。
+- 基础检查：`script.js` 语法检查通过；`server.py`、`server_config.py`、`server_storage.py` 编译检查通过。
 - 主流程：聊天、房间、Archive / More 二级页、圈圈主页面都可以继续迭代。
-- 当前缓存版本：`20260622-1037`。
-- 当前断点：先别再纠缠圈圈图片上传；它已经能压缩写入，后续属于缩略图/多图/失败队列优化。
-- 当前优先级：Moments 自动评论候选确认/执行链路已接入；下一步才是自动触发器。
+- 当前缓存版本：由 `server_config.py` 的 `FRONTEND_CACHE_VERSION` 统一控制。
+- 当前拆分状态：CSS / JS / 后端第一轮拆分已落地，可以收口；后续按功能需要再拆小模块，不再为了拆分本身继续无限小刀。
+- 当前优先级：继续功能开发前，保持启动脚本、V0.2 数据路径、前端入口和后端入口都指向 `frontend/lunatte-v0.2` 与 `sessions/prototype` 副本。
 
 ## 已跑通
 
@@ -68,6 +68,9 @@
 - UI：手机壳固定、底部 SVG 菜单、聊天三段式页面、圈圈顶部封面、隐藏网页滚动条、全局小窝弹层。
 - 服务灯：绿色表示 `8877` 上有本地小窝服务响应；连接提示会显示服务启动时间和 PID，方便判断是不是旧服务。
 - 启动脚本：双击 `start-stillgarden.bat` 会先清掉占用 `8877` 的旧本地服务，再启动新的黑框。
+- CSS 结构：`styles.css` 只保留模块入口，实际样式拆到 `css/00-tokens.css`、`css/00-foundation.css`、`css/10-home-rooms.css`、`css/20-chat-profile-dialogs.css`、`css/30-archive-timeline.css`、`css/40-subpages-settings.css`、`css/50-moments-wake.css`、`css/60-config-dock-responsive.css`。
+- JS 结构：`script.js` 仍是 Web DOM 入口，通用 token、配置、请求、状态读写、格式化和纯数据 helper 已抽到 `shared/lunatte-core.js`。
+- 后端结构：`server.py` 仍是 HTTP 入口，路径/默认配置在 `server_config.py`，JSON / JSONL / secrets / profile assets / prototype assets 存储 helper 在 `server_storage.py`。
 
 ## 雏形 / 入口
 
@@ -152,6 +155,7 @@
 
 ### 数据库 / 后端 / 搜索
 
+- 后端大单体第一轮拆分已收口：`server_config.py` 负责路径、默认配置和常量；`server_storage.py` 负责 JSON/JSONL、secrets、profile assets、prototype assets。剩余 `server.py` 里的 provider、routes、moments/timeline 业务逻辑后续按功能再拆，不作为当前阻塞。
 - 数据库选型：候选为 SQLite + FTS5，本地文件夹保存图片资产，后续可加向量表。
 - 迁移策略：从现有 JSONL 导入数据库，不直接丢弃现有记录。
 - 数据分层策略：短期聊天、长期确认记忆、圈圈事件、醒醒候选、图片资产要分表/分目录，不混成一个大文件。
