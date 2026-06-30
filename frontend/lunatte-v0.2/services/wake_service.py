@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import json
 import uuid
 from datetime import datetime, timezone
 
-from server_config import AUTO_WAKE_ORDER, AUTO_WAKE_REASONS, SESSION_LABELS, find_vault_root, normalize_session_room, wake_inbox_path
-from server_storage import append_jsonl, read_jsonl_events
+from server_config import AUTO_WAKE_ORDER, AUTO_WAKE_REASONS, SESSION_LABELS, normalize_session_room
+from repositories.wake_repository import append_wake_record, read_wake_events, wake_relative_path
 from services.chat_service import append_session_log
 
 def wake_copy(room: str, label: str, reason: str) -> str:
@@ -23,7 +22,6 @@ def create_wake_draft(room: str, reason: str, source: str = "manual", trigger: s
     label = config.get("room_labels", {}).get(safe_room) or SESSION_LABELS[safe_room]
     clean_reason = reason.strip()[:120] or "想轻轻问候一下"
     safe_source = source if source in {"manual", "auto"} else "manual"
-    path = wake_inbox_path()
     record = {
         "id": f"wake-{datetime.now().strftime('%Y%m%d%H%M%S%f')}-{uuid.uuid4().hex[:8]}",
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -39,11 +37,11 @@ def create_wake_draft(room: str, reason: str, source: str = "manual", trigger: s
         "tool_allowed": False,
         "archive_write": False,
     }
-    append_jsonl(path, record)
+    append_wake_record(record)
     return {
         "ok": True,
         "record": record,
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "relative_path": wake_relative_path(),
     }
 
 def create_auto_wake_draft() -> dict:
@@ -72,34 +70,25 @@ def create_auto_wake_draft() -> dict:
         "record": latest,
         "duplicate_prevented": True,
         "message": "今天的自动候选已经备齐，不再重复生成。",
-        "relative_path": str(wake_inbox_path().relative_to(find_vault_root())),
+        "relative_path": wake_relative_path(),
     }
 
 def read_wake_inbox(limit: int = 20) -> dict:
-    path = wake_inbox_path()
     by_id: dict[str, dict] = {}
     order: list[str] = []
-    if path.is_file():
-        with path.open("r", encoding="utf-8", errors="ignore") as handle:
-            for line in handle:
-                if not line.strip():
-                    continue
-                try:
-                    item = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
-                wake_id = str(item.get("id", "")).strip()
-                if not wake_id:
-                    continue
-                if wake_id not in by_id:
-                    order.append(wake_id)
-                    by_id[wake_id] = item
-                else:
-                    by_id[wake_id].update(item)
+    for item in read_wake_events():
+        wake_id = str(item.get("id", "")).strip()
+        if not wake_id:
+            continue
+        if wake_id not in by_id:
+            order.append(wake_id)
+            by_id[wake_id] = item
+        else:
+            by_id[wake_id].update(item)
     entries = [by_id[wake_id] for wake_id in reversed(order) if by_id[wake_id].get("status") != "dismissed"]
     return {
         "ok": True,
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "relative_path": wake_relative_path(),
         "entries": entries[: max(1, min(limit, 500))],
     }
 
@@ -139,12 +128,11 @@ def update_wake_draft(wake_id: str, action: str) -> dict:
     elif action == "dismiss":
         patch["dismissed"] = True
 
-    path = wake_inbox_path()
-    append_jsonl(path, patch)
+    append_wake_record(patch)
     updated = dict(match)
     updated.update(patch)
     return {
         "ok": True,
         "record": updated,
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "relative_path": wake_relative_path(),
     }

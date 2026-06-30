@@ -16,10 +16,6 @@ body {
   overflow: hidden;
 }
 
-button {
-  font: inherit;
-}
-
 p,
 span,
 strong,
@@ -217,4 +213,3 @@ h1 {
   width: 0;
   height: 0;
 }
-

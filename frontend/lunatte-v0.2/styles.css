@@ -1,12 +1,16 @@
 @import url("./css/00-tokens.css");
 @import url("./css/00-foundation.css");
+@import url("./css/05-components.css");
 @import url("./css/10-home-rooms.css");
 @import url("./css/20-chat.css");
-@import url("./css/21-profile-dialogs.css");
-@import url("./css/22-chat-search.css");
-@import url("./css/30-archive-timeline.css");
+@import url("./css/21-profile.css");
+@import url("./css/22-dialogs.css");
+@import url("./css/23-chat-search.css");
+@import url("./css/30-archive.css");
+@import url("./css/31-timeline.css");
 @import url("./css/40-subpages-settings.css");
-@import url("./css/50-moments-wake.css");
+@import url("./css/50-moments.css");
+@import url("./css/51-wake.css");
 @import url("./css/60-config-dock-responsive.css");
 
 /* Lunette V0.2 CSS entrypoint. Keep index.html pointed here; edit modules under ./css/. */

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from urllib.parse import urlparse
 
-from server_storage import read_secrets
+from services.config_secrets import aimas_api_key
 from services.config_service import read_config
 from providers.http_client import request_json
 
@@ -22,7 +22,7 @@ def probe_aimas(data: dict) -> dict:
     aimas = config.get("agent_connectors", {}).get("aimas", {})
     endpoint = str(data.get("endpoint") or aimas.get("endpoint") or "").strip()
     typed_key = str(data.get("api_key") or "").strip()
-    saved_key = read_secrets().get("aimas", {}).get("api_key", "")
+    saved_key = aimas_api_key()
     api_key = typed_key or saved_key
     try:
         health_url, models_url = aimas_urls(endpoint)

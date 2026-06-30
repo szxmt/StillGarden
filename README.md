@@ -11,7 +11,7 @@ D:\A月亮啊\memory-vault-starter
 V0.2 工作区位置：
 
 ```text
-D:\A月亮啊\lunette-v0.2
+D:\A月亮啊\lunette
 ```
 
 ## 当前阶段
@@ -29,7 +29,7 @@ D:\A月亮啊\lunette-v0.2
 ## 目录结构
 
 ```text
-lunette-v0.2/
+lunette/
   README.md
   .gitignore
   docs/
@@ -79,7 +79,7 @@ start-stillgarden.ps1
 进入原型目录：
 
 ```powershell
-cd D:\A月亮啊\lunette-v0.2\frontend\lunatte-v0.2
+cd D:\A月亮啊\lunette\frontend\lunatte-v0.2
 ```
 
 启动方式：
@@ -101,7 +101,7 @@ start-stillgarden.bat
 V0.2 数据副本位于：
 
 ```text
-D:\A月亮啊\lunette-v0.2\sessions\prototype
+D:\A月亮啊\lunette\sessions\prototype
 ```
 
 规则：
@@ -148,10 +148,10 @@ docs\imported-antigravity
 
 当前拆分状态：
 
-- CSS 第一轮可收口：主题 token / 基础层 / 页面模块已经拆出，页面 CSS 不需要为每套主题重写。
-- JS 第一轮可收口：纯工具、配置、请求封装、状态读写等复用逻辑已离开 Web DOM 层。
-- 后端第一轮可收口：JSON / JSONL、secrets、profile assets、prototype 图片资产和统一 append 逻辑已进入 storage 层。
-- 剩余拆分计划维护在 `docs/v0.2-next-actions.md` 的“剩余拆分计划”小节；后续功能推进前先看对应 JS / Python / CSS 门槛，避免继续把新逻辑堆回大文件。
+- CSS R5 可收口：全局视觉走 `00-tokens.css`，通用按钮/输入/开关/卡片/弹层/头像/状态条走 `05-components.css`，页面 CSS 只保留页面布局和局部差异。
+- JS R5 可收口：`script.js` 只做 bootstrapping；复用底层在 `shared/`；Web DOM controller、render、actions 已拆到 `web/`。
+- 后端 R5 可收口：HTTP 分发在 `routes/`，业务在 `services/`，外部模型在 `providers/`，JSONL/assets/config IO 已下沉到 `repositories/`。
+- 结构维护规则维护在 `docs/v0.2-next-actions.md` 的 R5 小节；后续功能推进前先看对应 CSS / JS / Python 门槛，避免继续把新逻辑堆回入口文件或最大文件。
 
 下一步：
 

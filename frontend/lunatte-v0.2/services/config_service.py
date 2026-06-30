@@ -1,58 +1,11 @@
 from __future__ import annotations
 
-import json
-import re
 from datetime import datetime
 
-from server_config import DEFAULT_CONFIG, SESSION_LABELS, config_path, default_config, find_vault_root, normalize_session_room
-from server_storage import read_secrets, write_json_dict, write_secrets
-
-def provider_secret_key(provider_id: str) -> str:
-    return str(provider_id or "").strip()[:80]
-
-def update_provider_secret(provider_id: str, api_key: str | None = None, clear: bool = False) -> bool:
-    clean_id = provider_secret_key(provider_id)
-    if not clean_id:
-        return False
-    secrets = read_secrets()
-    providers = secrets.get("providers")
-    if not isinstance(providers, dict):
-        providers = {}
-    item = providers.get(clean_id)
-    if not isinstance(item, dict):
-        item = {}
-    if clear:
-        item.pop("api_key", None)
-    elif api_key and api_key.strip():
-        item["api_key"] = api_key.strip()
-    providers[clean_id] = item
-    secrets["providers"] = providers
-    write_secrets(secrets)
-    return bool(item.get("api_key"))
-
-def provider_secret_saved(provider_id: str) -> bool:
-    clean_id = provider_secret_key(provider_id)
-    return bool(read_secrets().get("providers", {}).get(clean_id, {}).get("api_key"))
-
-def provider_api_key(provider_id: str) -> str:
-    clean_id = provider_secret_key(provider_id)
-    return str(read_secrets().get("providers", {}).get(clean_id, {}).get("api_key", ""))
-
-def update_aimas_secret(api_key: str | None = None, clear: bool = False) -> bool:
-    secrets = read_secrets()
-    aimas = secrets.get("aimas")
-    if not isinstance(aimas, dict):
-        aimas = {}
-    if clear:
-        aimas.pop("api_key", None)
-    elif api_key and api_key.strip():
-        aimas["api_key"] = api_key.strip()
-    secrets["aimas"] = aimas
-    write_secrets(secrets)
-    return bool(aimas.get("api_key"))
-
-def aimas_secret_saved() -> bool:
-    return bool(read_secrets().get("aimas", {}).get("api_key"))
+from server_config import SESSION_LABELS, default_config
+from repositories.config_repository import config_relative_path, read_config_file, write_config_file
+from services.config_policy import normalize_moments_auto_comments, normalize_self_access, normalize_user_profile, self_access_allowed
+from services.config_secrets import aimas_secret_saved, provider_api_key, provider_secret_saved, update_aimas_secret, update_provider_secret
 
 def sanitize_custom_provider(item: dict, fallback_name: str = "自定义1") -> dict:
     provider_id = str(item.get("id", "")).strip()[:80] or f"custom-{datetime.now().timestamp()}"
@@ -107,61 +60,6 @@ def apply_room_labels(config: dict, labels: dict) -> None:
         if value:
             config["room_labels"][room] = value[:40]
 
-def normalize_self_access(value: dict) -> dict:
-    if not isinstance(value, dict):
-        value = {}
-    raw_readers = value.get("readers", {})
-    if not isinstance(raw_readers, dict):
-        raw_readers = {}
-    readers = {
-        "linxu": bool(raw_readers.get("linxu")),
-        "dengdeng": bool(raw_readers.get("dengdeng")),
-        "aimas": bool(raw_readers.get("aimas")),
-    }
-    any_reader = any(readers.values())
-    return {
-        "enabled": bool(value.get("enabled")) and any_reader,
-        "readers": readers if any_reader else {"linxu": False, "dengdeng": False, "aimas": False},
-    }
-
-def normalize_moments_auto_comments(value: dict) -> dict:
-    if not isinstance(value, dict):
-        value = {}
-    raw_commenters = value.get("commenters", {})
-    if not isinstance(raw_commenters, dict):
-        raw_commenters = {}
-    commenters = {
-        "linxu": bool(raw_commenters.get("linxu")),
-        "dengdeng": bool(raw_commenters.get("dengdeng")),
-        "aimas": bool(raw_commenters.get("aimas")),
-    }
-    any_commenter = any(commenters.values())
-    try:
-        cooldown = int(value.get("cooldown_minutes", DEFAULT_CONFIG["moments_auto_comments"]["cooldown_minutes"]))
-    except (TypeError, ValueError):
-        cooldown = DEFAULT_CONFIG["moments_auto_comments"]["cooldown_minutes"]
-    cooldown = min(1440, max(15, cooldown))
-
-    def clean_time(raw: object, fallback: str) -> str:
-        text = str(raw or fallback).strip()
-        if re.fullmatch(r"([01]\d|2[0-3]):[0-5]\d", text):
-            return text
-        return fallback
-
-    return {
-        "enabled": bool(value.get("enabled")) and any_commenter,
-        "commenters": commenters if any_commenter else {"linxu": False, "dengdeng": False, "aimas": False},
-        "cooldown_minutes": cooldown,
-        "quiet_start": clean_time(value.get("quiet_start"), DEFAULT_CONFIG["moments_auto_comments"]["quiet_start"]),
-        "quiet_end": clean_time(value.get("quiet_end"), DEFAULT_CONFIG["moments_auto_comments"]["quiet_end"]),
-    }
-
-def normalize_user_profile(value: dict) -> dict:
-    if not isinstance(value, dict):
-        value = {}
-    nickname = str(value.get("nickname") or DEFAULT_CONFIG["user_profile"]["nickname"]).strip()[:20]
-    return {"nickname": nickname or DEFAULT_CONFIG["user_profile"]["nickname"]}
-
 def merge_config(data: dict) -> dict:
     config = default_config()
     if isinstance(data.get("providers"), dict):
@@ -214,18 +112,10 @@ def merge_config(data: dict) -> dict:
     return config
 
 def read_config() -> dict:
-    path = config_path()
-    if not path.is_file():
-        return default_config()
-    try:
-        with path.open("r", encoding="utf-8") as handle:
-            data = json.load(handle)
-    except (OSError, json.JSONDecodeError):
-        return default_config()
-    return merge_config(data)
+    data = read_config_file()
+    return merge_config(data) if data else default_config()
 
 def write_config(data: dict) -> dict:
-    path = config_path()
     config = read_config()
     if data.get("create_custom_provider"):
         if isinstance(data.get("custom_providers"), list):
@@ -300,11 +190,11 @@ def write_config(data: dict) -> dict:
     config["agent_connectors"]["aimas"]["key_saved"] = key_saved
     config["agent_connectors"]["aimas"]["allow_network"] = False
     config["updated_at"] = datetime.now().astimezone().isoformat(timespec="seconds")
-    write_json_dict(path, config)
+    write_config_file(config)
     return {
         "ok": True,
         "config": config,
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "relative_path": config_relative_path(),
     }
 
 def route_for_room(room: str, config: dict) -> dict:
@@ -329,10 +219,3 @@ def route_for_room(room: str, config: dict) -> dict:
             "agent": config.get("agent_connectors", {}).get("aimas", {}),
         }
     return {"route_id": route_id, "type": "shared"}
-
-def self_access_allowed(room: str, config: dict) -> bool:
-    safe_room = normalize_session_room(room)
-    if safe_room == "living":
-        return False
-    access = normalize_self_access(config.get("self_access", {}))
-    return bool(access.get("enabled") and access.get("readers", {}).get(safe_room))

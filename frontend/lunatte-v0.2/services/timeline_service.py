@@ -3,9 +3,16 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from server_config import SESSION_LABELS, confirmed_memory_path, find_vault_root, moments_path, session_log_path
-from server_storage import read_jsonl_events
-from services.moments_service import moment_author_label, moment_event_author_label
+from server_config import SESSION_LABELS
+from repositories.timeline_repository import (
+    read_timeline_memory_events,
+    read_timeline_moment_events,
+    read_timeline_session_events,
+    source_relative_path,
+    timeline_sources,
+)
+from server_config import confirmed_memory_path, moments_path, session_log_path
+from services.moments_labels import moment_author_label, moment_event_author_label
 from services.text_utils import clean_memory_text
 
 def timeline_event(
@@ -44,13 +51,12 @@ def timeline_event(
     return item
 
 def read_timeline(limit: int = 120) -> dict:
-    vault = find_vault_root()
     events: list[dict] = []
     per_source_limit = max(50, min(limit, 300))
 
     for room in SESSION_LABELS:
         path = session_log_path(room)
-        for entry in read_jsonl_events(path, per_source_limit):
+        for entry in read_timeline_session_events(room, per_source_limit):
             text = clean_memory_text(str(entry.get("text", "")), 1800)
             if not text:
                 continue
@@ -67,12 +73,12 @@ def read_timeline(limit: int = 120) -> dict:
                 event_id=str(entry.get("client_id", "")) or "",
                 extra={
                     "role": role,
-                    "source_file": str(path.relative_to(vault)),
+                    "source_file": source_relative_path(path),
                 },
             ))
 
     moments_file = moments_path()
-    for entry in read_jsonl_events(moments_file, max(200, per_source_limit * 3)):
+    for entry in read_timeline_moment_events(max(200, per_source_limit * 3)):
         event_type = str(entry.get("type", "post"))
         if event_type not in {"post", "comment"}:
             continue
@@ -94,12 +100,12 @@ def read_timeline(limit: int = 120) -> dict:
             event_id=str(entry.get("comment_id") or entry.get("id") or ""),
             extra={
                 "reply_to": clean_memory_text(str(entry.get("reply_to", "")), 80),
-                "source_file": str(moments_file.relative_to(vault)),
+                "source_file": source_relative_path(moments_file),
             },
         ))
 
     memory_file = confirmed_memory_path()
-    for entry in read_jsonl_events(memory_file, per_source_limit):
+    for entry in read_timeline_memory_events(per_source_limit):
         title = clean_memory_text(str(entry.get("title", "")), 160)
         body = clean_memory_text(str(entry.get("body", "") or entry.get("text", "")), 1800)
         text = f"{title}\n{body}".strip() if title else body
@@ -118,7 +124,7 @@ def read_timeline(limit: int = 120) -> dict:
             extra={
                 "readable_scope": entry.get("readable_scope", ""),
                 "sensitive": bool(entry.get("sensitive")),
-                "source_file": str(memory_file.relative_to(vault)),
+                "source_file": source_relative_path(memory_file),
             },
         ))
 
@@ -126,10 +132,6 @@ def read_timeline(limit: int = 120) -> dict:
     return {
         "ok": True,
         "entries": events[: max(1, min(limit, 500))],
-        "sources": {
-            "session": [str(session_log_path(room).relative_to(vault)) for room in SESSION_LABELS],
-            "moments": str(moments_file.relative_to(vault)),
-            "archive": str(memory_file.relative_to(vault)),
-        },
+        "sources": timeline_sources(),
         "note": "统一时间线草稿：只读聚合，不迁移、不写入、不做向量化。",
     }

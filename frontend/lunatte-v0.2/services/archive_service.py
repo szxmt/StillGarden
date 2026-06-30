@@ -1,14 +1,21 @@
 from __future__ import annotations
 
-import json
 import subprocess
 import sys
 import uuid
-from collections import deque
 from datetime import datetime, timezone
 
-from server_config import SESSION_LABELS, confirmed_memory_path, find_vault_root, memory_candidate_path, normalize_session_room, session_log_path
-from server_storage import append_jsonl, read_jsonl_events
+from server_config import SESSION_LABELS, normalize_session_room
+from repositories.archive_repository import (
+    append_confirmed_memory,
+    append_memory_candidate,
+    confirmed_memory_count,
+    confirmed_memory_relative_path,
+    memory_candidate_relative_path,
+    read_confirmed_events,
+    read_session_entries_for_day,
+)
+from services.config_service import read_config
 from services.text_utils import clean_memory_text
 
 def room_memory_source(room: str) -> str:
@@ -50,33 +57,16 @@ def readable_scope_targets(scope: str, room: str) -> list[str]:
     return [safe_room]
 
 def read_confirmed_memory(limit: int = 40) -> dict:
-    path = confirmed_memory_path()
-    entries = list(reversed(read_jsonl_events(path, limit)))
     return {
         "ok": True,
-        "relative_path": str(path.relative_to(find_vault_root())),
-        "entries": entries,
+        "relative_path": confirmed_memory_relative_path(),
+        "entries": read_confirmed_events(limit),
     }
 
 def recent_session_entries_for_summary(room: str, date_value: str | None = None, limit: int = 80) -> list[dict]:
     safe_room = normalize_session_room(room)
     day = (date_value or datetime.now().astimezone().date().isoformat())[:10]
-    path = session_log_path(safe_room)
-    entries: deque[dict] = deque(maxlen=max(1, min(limit, 300)))
-    if path.is_file():
-        with path.open("r", encoding="utf-8", errors="ignore") as handle:
-            for line in handle:
-                if not line.strip():
-                    continue
-                try:
-                    item = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
-                timestamp = str(item.get("timestamp", ""))
-                role = str(item.get("role", ""))
-                if timestamp.startswith(day) and role in {"user", "assistant"}:
-                    entries.append(item)
-    return list(entries)
+    return read_session_entries_for_day(safe_room, day, limit)
 
 def summarize_session_entries(entries: list[dict], label: str) -> str:
     if not entries:
@@ -98,7 +88,6 @@ def build_daily_summary_candidate(room: str, date_value: str | None = None) -> d
     entries = recent_session_entries_for_summary(safe_room, day)
     title = f"{label} {day} 日摘要"
     text = summarize_session_entries(entries, label)
-    path = memory_candidate_path()
     record = {
         "id": f"memcand-{datetime.now().strftime('%Y%m%d%H%M%S%f')}-{uuid.uuid4().hex[:8]}",
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -113,11 +102,11 @@ def build_daily_summary_candidate(room: str, date_value: str | None = None) -> d
         "archive_write": False,
         "confirmed": False,
     }
-    append_jsonl(path, record)
+    append_memory_candidate(record)
     return {
         "ok": True,
         "record": record,
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "relative_path": memory_candidate_relative_path(),
     }
 
 def confirm_memory(data: dict) -> dict:
@@ -146,7 +135,6 @@ def confirm_memory(data: dict) -> dict:
     now = datetime.now().astimezone()
     day = clean_memory_text(str(data.get("date", "")), 20)[:10] or now.date().isoformat()
     memory_id = f"mem-{now.strftime('%Y%m%d%H%M%S%f')}-{uuid.uuid4().hex[:8]}"
-    path = confirmed_memory_path()
     record = {
         "memory_id": memory_id,
         "conversation_id": memory_id,
@@ -172,7 +160,7 @@ def confirm_memory(data: dict) -> dict:
         "privacy_rule": readable_scope_rule(readable_scope, safe_room),
         "room_privacy_rule": room_privacy_rule(safe_room),
     }
-    append_jsonl(path, record)
+    append_confirmed_memory(record)
 
     if candidate_id:
         candidate_patch = {
@@ -182,20 +170,19 @@ def confirm_memory(data: dict) -> dict:
             "confirmed": True,
             "memory_id": memory_id,
         }
-        append_jsonl(memory_candidate_path(), candidate_patch)
+        append_memory_candidate(candidate_patch)
 
     return {
         "ok": True,
         "record": record,
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "relative_path": confirmed_memory_relative_path(),
         "message": "已确认入库；Archive 搜索会读取这条 confirmed-memory。",
     }
 
 def refresh_memory_index() -> dict:
-    path = confirmed_memory_path()
     return {
         "ok": True,
-        "confirmed_count": count_jsonl(path),
-        "relative_path": str(path.relative_to(find_vault_root())),
+        "confirmed_count": confirmed_memory_count(),
+        "relative_path": confirmed_memory_relative_path(),
         "message": "当前索引是实时读取 JSONL：刷新完成，新的确认记忆已经可被搜索。",
     }
