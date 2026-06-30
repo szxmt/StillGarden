@@ -40,4 +40,11 @@ gpt/raw/*.zip
 gemini/raw/*.zip
 incoming/**/*.zip
 
-docs/references/
+# Local reference dumps: keep raw research material local, but allow curated markdown summaries.
+docs/references/*
+!docs/references/
+!docs/references/*.md
+
+# Raw UI templates and scraped/reference assets are not project source.
+docs/imported-antigravity/ui模板/
+docs/archive/imported-antigravity-raw/ui模板/
