@@ -34,8 +34,7 @@ const {
   timelineTypeLabel,
   timelineMatchesPerson,
   timelineMatchesSource,
-  timelineFilterLabel,
-  createBrowserStorage
+  timelineFilterLabel
 } = window.LunatteCore;
 
 let selectedRoom = "linxu";
@@ -57,8 +56,8 @@ let currentTimelinePerson = "all";
 let currentTimelineSource = "all";
 let timelinePage = 1;
 const timelinePageSize = 5;
-const appApi = window.LunatteCore.createApiClient({ isOnline: () => serviceOnline });
-const browserStore = createBrowserStorage(window.localStorage);
+const appApi = window.LunatteApi.createClient({ isOnline: () => serviceOnline });
+const browserStore = window.LunatteState.createBrowserStorage();
 
 let pendingMomentImage = "";
 let currentMomentScope = "all";
@@ -80,7 +79,7 @@ let profileAssetsSignature = "";
 async function loadHomeStats() {
   const status = document.getElementById("homeStatus");
   try {
-    const data = await appApi.stats();
+    const data = await appApi.getStats();
     document.getElementById("statGptChats").textContent = formatNumber(data.gpt_conversations);
     document.getElementById("statGeminiCards").textContent = formatNumber(data.gemini_activities);
     document.getElementById("statSupplements").textContent = formatNumber(data.incoming_supplements);
@@ -116,7 +115,7 @@ async function loadServiceStatus() {
     return;
   }
   try {
-    const data = await appApi.health();
+    const data = await appApi.getHealth();
     serviceOnline = Boolean(data.ok);
     label.textContent = serviceOnline ? "已连接" : "未连接";
     const started = data.started_at ? `；启动于 ${formatSessionTime(data.started_at)}` : "";
@@ -210,7 +209,7 @@ async function loadApiConfig() {
     return;
   }
   try {
-    const data = await appApi.config();
+    const data = await appApi.getConfig();
     apiConfigCache = normalizeApiConfig(data.config);
     refreshMyNicknameLabels();
     renderApiConfig(selectedProviderId);
@@ -457,15 +456,7 @@ async function runMomentsAutoCandidate(momentId, commenter) {
   const status = document.getElementById("momentAutoCommentStatus");
   if (status) status.textContent = `正在请${label}回应候选圈圈...`;
   try {
-    const response = await fetch("/api/moment-action", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: momentId, action: "auto_comment", author: safeCommenter })
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.runMomentAction({ id: momentId, action: "auto_comment", author: safeCommenter });
     renderMoments(mergeMomentEntries(readBrowserMoments(), data.entries || []));
     if (status) status.textContent = `${label}已回应；候选已刷新。`;
     await previewMomentsAutoComments();
@@ -484,11 +475,7 @@ async function previewMomentsAutoComments() {
   }
   if (status) status.textContent = "正在读取自动评论候选...";
   try {
-    const response = await fetch("/api/moments-auto-preview");
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.previewMomentsAutoComments();
     renderMomentsAutoPreview(data);
     if (status) status.textContent = data.summary || "自动评论候选已读取。";
   } catch (error) {
@@ -766,17 +753,10 @@ async function probeAimasConnector() {
       configStatus.textContent = "Aimas 配置已保存，正在做 Hermes 探针。";
     }
 
-    const probeResponse = await fetch("/api/aimas-probe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        endpoint: document.getElementById("aimasEndpoint")?.value || "",
-        api_key: typedKey
-      })
+    const data = await appApi.probeAimas({
+      endpoint: document.getElementById("aimasEndpoint")?.value || "",
+      api_key: typedKey
     });
-    const data = await probeResponse.json();
     const models = data.models?.items?.length ? data.models.items.join(", ") : "未返回模型列表";
     if (data.ok) {
       if (status) {
@@ -855,17 +835,14 @@ function writeChatPrefs(prefs) {
 }
 
 function chatPrefsFor(room) {
-  return readChatPrefs()[room] || {};
+  return browserStore.chatPrefsFor(room);
 }
 
 function updateChatPrefs(room, patch) {
   const safeRoom = chatProfiles[room] ? room : "linxu";
-  const prefs = readChatPrefs();
-  prefs[safeRoom] = {
-    ...(prefs[safeRoom] || {}),
-    ...patch
-  };
-  writeChatPrefs(prefs);
+  if (!browserStore.updateChatPrefs(safeRoom, patch)) {
+    showChatToast("这个浏览器没有存下聊天设置。", "warning", 2200);
+  }
   applyChatPreferences(safeRoom);
   renderChatInfoSheet(safeRoom);
   updateConversationPreview(safeRoom);
@@ -1015,11 +992,7 @@ async function loadProfileAssets() {
     return;
   }
   try {
-    const response = await fetch("/api/profile-assets");
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.getProfileAssets();
     const nextAssets = data.assets || {};
     const nextSignature = JSON.stringify(nextAssets);
     if (profileAssetsLoaded && nextSignature === profileAssetsSignature) {
@@ -1830,15 +1803,7 @@ async function saveRoomAsset(room, kind, dataUrl) {
   const assets = readProfileAssets();
   if (serviceOnline) {
     try {
-      const response = await fetch("/api/profile-asset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room: safeRoom, kind, data_url: dataUrl })
-      });
-      const data = await response.json();
-      if (!response.ok || !data.ok) {
-        throw new Error(data.message || `HTTP ${response.status}`);
-      }
+      const data = await appApi.saveProfileAsset({ room: safeRoom, kind, data_url: dataUrl });
       serverProfileAssets = data.assets || {};
       profileAssetsSignature = JSON.stringify(serverProfileAssets);
       profileAssetsLoaded = true;
@@ -1877,15 +1842,7 @@ async function clearProfileImages() {
   const assets = readProfileAssets();
   if (serviceOnline) {
     try {
-      const response = await fetch("/api/profile-assets-clear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room, kinds: ["avatar", "background"] })
-      });
-      const data = await response.json();
-      if (!response.ok || !data.ok) {
-        throw new Error(data.message || `HTTP ${response.status}`);
-      }
+      const data = await appApi.clearProfileAssets({ room, kinds: ["avatar", "background"] });
       serverProfileAssets = data.assets || {};
       profileAssetsSignature = JSON.stringify(serverProfileAssets);
       profileAssetsLoaded = true;
@@ -1951,15 +1908,7 @@ async function clearMyProfileImages() {
   const assets = readProfileAssets();
   if (serviceOnline) {
     try {
-      const response = await fetch("/api/profile-assets-clear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room: "me", kinds: ["avatar", "background"] })
-      });
-      const data = await response.json();
-      if (!response.ok || !data.ok) {
-        throw new Error(data.message || `HTTP ${response.status}`);
-      }
+      const data = await appApi.clearProfileAssets({ room: "me", kinds: ["avatar", "background"] });
       serverProfileAssets = data.assets || {};
       profileAssetsSignature = JSON.stringify(serverProfileAssets);
       profileAssetsLoaded = true;
@@ -1988,11 +1937,7 @@ async function loadMoments(options = {}) {
     return;
   }
   try {
-    const response = await fetch("/api/moments?limit=80");
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.getMoments({ limit: 80 });
     const entries = mergeMomentEntries(readBrowserMoments(), data.entries || []);
     const signature = momentEntriesSignature(entries);
     if (options.background && (signature === latestMomentSignature || isMomentInteractionActive())) {
@@ -2084,11 +2029,7 @@ async function loadTimeline() {
   }
   if (statusNode) statusNode.textContent = "正在读取本地时间线...";
   try {
-    const response = await fetch("/api/timeline?limit=160");
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.getTimeline({ limit: 160 });
     timelineEntries = Array.isArray(data.entries) ? data.entries : [];
     timelinePage = 1;
     renderTimelineEvents();
@@ -2117,15 +2058,13 @@ async function createMoment(source = "manual") {
   }
   try {
     const imageForPost = await prepareMomentImageForPost(status);
-    const response = await fetch("/api/moment-create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ author, text: text || (imageForPost ? "分享了一张图片。" : text), source, reason, image_data: imageForPost })
+    const data = await appApi.createMoment({
+      author,
+      text: text || (imageForPost ? "分享了一张图片。" : text),
+      source,
+      reason,
+      image_data: imageForPost
     });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
     renderMoments(mergeMomentEntries(readBrowserMoments(), data.entries || []));
     finishMomentComposer(pendingMomentImage && data.created?.image_relative_path
       ? `图片圈圈已写入 ${data.created.image_relative_path}`
@@ -2153,15 +2092,7 @@ async function createMomentFromChat(author, text) {
     return;
   }
   try {
-    const response = await fetch("/api/moment-create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ author: cleanAuthor, text: cleanText, source: "from_chat", reason })
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.createMoment({ author: cleanAuthor, text: cleanText, source: "from_chat", reason });
     renderMoments(mergeMomentEntries(readBrowserMoments(), data.entries || []));
     showChatToast("已从聊天发到圈圈。", "success", 2000);
   } catch (error) {
@@ -2406,15 +2337,14 @@ async function handleMomentAction(id, action, options = {}) {
     return;
   }
   try {
-    const response = await fetch("/api/moment-action", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, action, author, text, comment_id: options.commentId || "", reply_to: options.replyTo || "" })
+    const data = await appApi.runMomentAction({
+      id,
+      action,
+      author,
+      text,
+      comment_id: options.commentId || "",
+      reply_to: options.replyTo || ""
     });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
     renderMoments(mergeMomentEntries(readBrowserMoments(), data.entries || []));
     if (action === "auto_comment") {
       const status = document.getElementById("momentStatus");
@@ -2492,11 +2422,7 @@ async function loadWakeInbox() {
     return;
   }
   try {
-    const response = await fetch("/api/wake-inbox?limit=500");
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
+    const data = await appApi.getWakeInbox({ limit: 500 });
     renderWakeInbox(data.entries || []);
   } catch (error) {
     box.innerHTML = `<p class="config-status">唤醒收件箱读取失败：${escapeHtml(error.message)}</p>`;
@@ -2556,17 +2482,7 @@ async function handleWakeAction(id, action) {
     return;
   }
   try {
-    const response = await fetch("/api/wake-action", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ id, action })
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.updateWakeDraft(id, action);
     if (action === "send_to_chat" && data.record?.room) {
       refreshConversationPreview(data.record.room);
     }
@@ -2606,17 +2522,7 @@ async function createWakeDraft() {
       renderWakeInbox(writeBrowserWakeDraft(record), 1);
       return;
     }
-    const response = await fetch("/api/wake-draft", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ room, reason })
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.createWakeDraft({ room, reason });
     wakeInboxPage = 1;
     await loadWakeInbox();
   } catch (error) {
@@ -2666,17 +2572,7 @@ async function createAutoWakeDraft() {
       renderWakeInbox(writeBrowserWakeDraft(record), 1);
       return;
     }
-    const response = await fetch("/api/wake-auto", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({})
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.createAutoWakeDraft();
     wakeInboxPage = 1;
     await loadWakeInbox();
     if (data.duplicate_prevented) {
@@ -2765,11 +2661,7 @@ async function loadConfirmedMemory() {
     return;
   }
   try {
-    const response = await fetch("/api/memory-confirmed?limit=8");
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
+    const data = await appApi.getConfirmedMemory({ limit: 8 });
     list.innerHTML = renderConfirmedMemory(data.entries || []);
   } catch (error) {
     list.innerHTML = `<p class="archive-empty">确认记忆读取失败：${escapeHtml(error.message)}</p>`;
@@ -2793,15 +2685,7 @@ async function generateDailyMemoryDraft() {
   if (button) button.disabled = true;
   memoryStatus("正在把今天的聊天压成一张草稿纸...");
   try {
-    const response = await fetch("/api/memory-daily-summary", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ room })
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
+    const data = await appApi.createDailyMemorySummary({ room });
     const record = data.record || {};
     currentMemoryCandidateId = record.id || "";
     const title = document.getElementById("memoryTitle");
@@ -2858,25 +2742,17 @@ async function confirmMemoryEntry() {
   if (button) button.disabled = true;
   memoryStatus("正在确认入库...");
   try {
-    const response = await fetch("/api/memory-confirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        room,
-        category,
-        title,
-        text,
-        relation_object: relationObject,
-        importance,
-        readable_scope: readableScope,
-        sensitive,
-        candidate_id: currentMemoryCandidateId
-      })
+    const data = await appApi.confirmMemory({
+      room,
+      category,
+      title,
+      text,
+      relation_object: relationObject,
+      importance,
+      readable_scope: readableScope,
+      sensitive,
+      candidate_id: currentMemoryCandidateId
     });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
     currentMemoryCandidateId = "";
     memoryStatus(`已确认入库：${data.relative_path}。现在可以用 Archive 搜这条记忆。`);
     await loadConfirmedMemory();
@@ -2896,15 +2772,7 @@ async function refreshMemoryIndex() {
   if (button) button.disabled = true;
   memoryStatus("正在刷新索引状态...");
   try {
-    const response = await fetch("/api/memory-refresh", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}"
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.message || `HTTP ${response.status}`);
-    }
+    const data = await appApi.refreshMemoryIndex();
     memoryStatus(`${data.message} 当前确认记忆 ${formatNumber(data.confirmed_count || 0)} 条。`);
     await loadConfirmedMemory();
   } catch (error) {
@@ -3572,11 +3440,7 @@ document.addEventListener("click", async (event) => {
   output.textContent = "正在敲门取上下文草稿...";
 
   try {
-    const response = await fetch(`/api/context?room=${encodeURIComponent(room)}&query=${encodeURIComponent(query)}`);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
+    const data = await appApi.getContext({ room, query });
     output.textContent = data.markdown || data.message || "没有生成内容。";
   } catch (error) {
     output.textContent =
@@ -3599,13 +3463,7 @@ document.getElementById("archiveSearchButton")?.addEventListener("click", async 
   button.disabled = true;
   output.textContent = "正在轻轻翻抽屉...";
   try {
-    const response = await fetch(
-      `/api/search?room=${encodeURIComponent(room)}&query=${encodeURIComponent(query)}&include_sensitive=${includeSensitive}`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
+    const data = await appApi.searchArchive({ room, query, includeSensitive });
     output.innerHTML = renderArchiveResults(data);
   } catch (error) {
     output.innerHTML = `
