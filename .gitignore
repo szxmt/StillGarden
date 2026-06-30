@@ -39,3 +39,5 @@ preview-*.tmp
 gpt/raw/*.zip
 gemini/raw/*.zip
 incoming/**/*.zip
+
+docs/references/MemoryConstellations/
