@@ -40,4 +40,4 @@ gpt/raw/*.zip
 gemini/raw/*.zip
 incoming/**/*.zip
 
-docs/references/MemoryConstellations/
+docs/references/
