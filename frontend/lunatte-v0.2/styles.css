@@ -1,7 +1,9 @@
 @import url("./css/00-tokens.css");
 @import url("./css/00-foundation.css");
 @import url("./css/10-home-rooms.css");
-@import url("./css/20-chat-profile-dialogs.css");
+@import url("./css/20-chat.css");
+@import url("./css/21-profile-dialogs.css");
+@import url("./css/22-chat-search.css");
 @import url("./css/30-archive-timeline.css");
 @import url("./css/40-subpages-settings.css");
 @import url("./css/50-moments-wake.css");

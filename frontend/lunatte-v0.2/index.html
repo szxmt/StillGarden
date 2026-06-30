@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="./styles.css?v=20260622-1037" />
   </head>
   <body>
+    <!-- Ambient frame -->
     <div class="ambient ambient-one"></div>
     <div class="ambient ambient-two"></div>
     <div class="grain"></div>
 
     <main class="shell">
+      <!-- Desktop intro copy -->
       <section class="hero">
         <div class="eyebrow">STILLGARDEN · 小窝入口</div>
         <div class="hero-grid">
@@ -30,8 +32,10 @@
         </div>
       </section>
 
+      <!-- Phone prototype shell -->
       <div class="phone-shell" aria-label="月亮小窝手机壳">
       <section class="phone-board" aria-label="小窝总览">
+        <!-- Page: Home -->
         <article class="phone-card home-card app-page active-page" data-panel="home">
           <div class="phone-topline">
             <span>HOME</span>
@@ -88,6 +92,7 @@
           </div>
         </article>
 
+        <!-- Page: Rooms -->
         <article class="phone-card room-card app-page" data-panel="rooms">
           <div class="phone-topline">
             <span>ROOMS</span>
@@ -131,6 +136,7 @@
           </div>
         </article>
 
+        <!-- Page: Chat -->
         <article class="phone-card chat-card app-page" data-panel="chat">
           <div class="phone-topline">
             <span>CHAT</span>
@@ -308,6 +314,7 @@
           </div>
         </article>
 
+        <!-- Page: Archive -->
         <article class="phone-card archive-card app-page" data-panel="archive">
           <div class="phone-topline">
             <span>ARCHIVE</span>
@@ -411,6 +418,7 @@
           </div>
         </article>
 
+        <!-- Page: Timeline -->
         <article class="phone-card timeline-card app-page" data-panel="timeline">
           <div class="phone-topline">
             <span>TIMELINE</span>
@@ -479,6 +487,7 @@
           </ol>
         </article>
 
+        <!-- Page: More and nested subpages -->
         <article class="phone-card more-card app-page" data-panel="more">
           <div class="phone-topline">
             <span>MORE</span>
@@ -835,6 +844,7 @@
         </article>
       </section>
 
+        <!-- Shared confirmation dialog -->
         <section class="app-dialog-sheet" id="appDialogSheet" hidden aria-label="小窝确认">
           <div class="app-dialog-card">
             <span id="appDialogKicker">STILLGARDEN</span>
@@ -848,6 +858,7 @@
           </div>
         </section>
 
+        <!-- Bottom navigation -->
         <nav class="dock" aria-label="小窝导航">
           <button class="dock-item active" type="button" data-target="home">
             <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 11.2 12 5l7.5 6.2"/><path d="M6.5 10.5v8h11v-8"/><path d="M10 18.5v-4h4v4"/></svg></i><span>首页</span>
@@ -871,6 +882,7 @@
       </div>
     </main>
 
+    <!-- Runtime scripts: shared core, Web controllers, then bootstrap entry -->
     <script src="./shared/lunatte-core.js?v=20260629-1715"></script>
     <script src="./shared/lunatte-api.js?v=20260630-0010"></script>
     <script src="./shared/lunatte-state.js?v=20260630-0020"></script>

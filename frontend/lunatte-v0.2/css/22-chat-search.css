@@ -1,0 +1,119 @@
+.chat-search-box {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.chat-search-box span,
+.chat-info-context summary {
+  color: var(--muted);
+  font-family: var(--font-serif-latin);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.chat-search-box input {
+  min-height: 42px;
+  padding: 0 var(--space-13);
+  color: var(--ink);
+  border: 1px solid var(--line-14);
+  border-radius: var(--radius-lg);
+  outline: none;
+  background: var(--surface-white-70);
+  font: inherit;
+}
+
+.chat-info-status {
+  margin: -var(--space-8) 0 0;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+.chat-search-results {
+  display: grid;
+  gap: var(--space-8);
+  max-height: 210px;
+  overflow: auto;
+  padding-right: 2px;
+  scrollbar-width: none;
+}
+
+.chat-search-results::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.chat-search-result,
+.chat-search-empty {
+  width: 100%;
+  border: 1px solid var(--line-14);
+  border-radius: var(--radius-17);
+  background: var(--surface-white-68);
+}
+
+.chat-search-result {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-11) var(--space-13);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.chat-search-result:hover {
+  transform: translateY(-1px);
+  border-color: var(--raw-raw-rgba-195-93-135-0-28);
+  background: var(--raw-raw-rgba-255-248-251-0-9);
+}
+
+.chat-search-result:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.chat-search-result span {
+  color: var(--raw-hex-a68293);
+  font-size: 0.72rem;
+}
+
+.chat-search-result strong {
+  color: var(--raw-hex-6e5b66);
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.chat-search-empty {
+  margin: var(--space-0);
+  padding: var(--space-12) var(--space-13);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.chat-info-context {
+  display: grid;
+  gap: var(--space-8);
+  padding: var(--space-14);
+  border: 1px solid var(--line-12);
+  border-radius: var(--radius-20);
+  background: var(--surface-white-48);
+}
+
+.chat-info-context summary {
+  cursor: pointer;
+}
+
+.chat-info-context pre {
+  max-height: 180px;
+  margin: var(--space-8) 0 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--text-subtle-2);
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+

@@ -68,7 +68,7 @@
 - UI：手机壳固定、底部 SVG 菜单、聊天三段式页面、圈圈顶部封面、隐藏网页滚动条、全局小窝弹层。
 - 服务灯：绿色表示 `8877` 上有本地小窝服务响应；连接提示会显示服务启动时间和 PID，方便判断是不是旧服务。
 - 启动脚本：双击 `start-stillgarden.bat` 会先清掉占用 `8877` 的旧本地服务，再启动新的黑框。
-- CSS 结构：`styles.css` 只保留模块入口，实际样式拆到 `css/00-tokens.css`、`css/00-foundation.css`、`css/10-home-rooms.css`、`css/20-chat-profile-dialogs.css`、`css/30-archive-timeline.css`、`css/40-subpages-settings.css`、`css/50-moments-wake.css`、`css/60-config-dock-responsive.css`。
+- CSS 结构：`styles.css` 只保留模块入口，实际样式拆到 `css/00-tokens.css`、`css/00-foundation.css`、`css/10-home-rooms.css`、`css/20-chat.css`、`css/21-profile-dialogs.css`、`css/22-chat-search.css`、`css/30-archive-timeline.css`、`css/40-subpages-settings.css`、`css/50-moments-wake.css`、`css/60-config-dock-responsive.css`。
 - JS 结构：`script.js` 仍是 Web DOM 入口，通用 token、配置、请求、状态读写、格式化和纯数据 helper 已抽到 `shared/lunatte-core.js`。
 - 后端结构：`server.py` 仍是 HTTP 入口，路径/默认配置在 `server_config.py`，JSON / JSONL / secrets / profile assets / prototype assets 存储 helper 在 `server_storage.py`。
 - 剩余拆分计划：详见根目录 `docs/v0.2-next-actions.md` 的“剩余拆分计划”；后续做 Archive 审计、Timeline/SQLite、Moments 自动触发、人格/RAG 或大页面 UI 时，先按对应门槛拆 service/controller，不能继续往单文件堆。
