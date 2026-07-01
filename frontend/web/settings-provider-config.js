@@ -307,7 +307,7 @@ async function probeAimasConnector() {
   const status = document.getElementById("aimasProbeStatus");
   const configStatus = document.getElementById("apiConfigStatus");
   if (!serviceOnline) {
-    if (status) status.textContent = "未连接本地服务：请用 start-stillgarden.bat 打开后再测试。";
+    if (status) status.textContent = "未连接本地服务：请用 start-lunatte.bat 打开后再测试。";
     return;
   }
   if (status) status.textContent = "正在保存并测试 Aimas / Hermes...";

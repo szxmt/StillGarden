@@ -4,7 +4,7 @@
 
 ## CSS
 
-- 全局视觉只改 `frontend/lunatte-v0.2/css/00-tokens.css`，或未来新增的主题 token 文件。
+- 全局视觉只改 `frontend/css/00-tokens.css`，或未来新增的主题 token 文件。
 - 通用按钮、输入、select、textarea、开关、卡片、弹层、toast、头像、状态条写入 `05-components.css`。
 - 页面 CSS 只写页面独有布局：
   - Chat：`20-chat.css`
@@ -64,18 +64,18 @@
 每次代码提交前至少运行：
 
 ```powershell
-node --check frontend\lunatte-v0.2\script.js
-python -m py_compile frontend\lunatte-v0.2\server.py
+node --check frontend\script.js
+python -m py_compile backend\server.py backend\server_config.py backend\server_storage.py
 ```
 
-涉及 shared/web/services/routes/providers/repositories 时，要扩大检查到对应目录。
+涉及 `frontend/shared`、`frontend/web`、`backend/services`、`backend/routes`、`backend/providers`、`backend/repositories` 时，要扩大检查到对应目录。
 
 短启动 8877 后必须确认：
 
 - `/api/health` 返回 200。
-- `sessions` 指向 `D:\A月亮啊\lunette\sessions\prototype`。
+- `sessions` 指向 `D:\Aaa.项目\lunatte\data\sessions\prototype`。
 
-写入型测试产生的 `sessions/prototype` diff 默认不提交。
+写入型测试产生的 `data/sessions/prototype` diff 默认不提交。
 
 ## 文档写入
 

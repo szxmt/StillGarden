@@ -65,7 +65,7 @@ async function loadConfirmedMemory() {
     return;
   }
   if (!serviceOnline) {
-    list.innerHTML = `<p class="archive-empty">静态预览模式：确认记忆需要用 start-stillgarden.bat 打开后读取。</p>`;
+    list.innerHTML = `<p class="archive-empty">静态预览模式：确认记忆需要用 start-lunatte.bat 打开后读取。</p>`;
     return;
   }
   try {
@@ -139,7 +139,7 @@ async function confirmMemoryEntry() {
       `重要度：${memoryImportanceLabels[importance] || importance}\n` +
       `可读范围：${memoryScopeLabels[readableScope] || readableScope}\n` +
       `敏感标记：${sensitive ? "是" : "否"}\n\n` +
-      "确认后会写入 sessions/prototype/confirmed-memory.jsonl。",
+      "确认后会写入 data/sessions/prototype/confirmed-memory.jsonl。",
     cancelText: "再看看",
     confirmText: "确认留下"
   });
@@ -204,7 +204,7 @@ function initArchiveController() {
     } catch (error) {
       output.innerHTML = `
         <p class="archive-empty">
-          现在是静态页面模式，还没有启动本地小窝服务。双击 start-stillgarden.bat 后，这个抽屉会调用记忆搜索工具。
+          现在是静态页面模式，还没有启动本地小窝服务。双击 start-lunatte.bat 后，这个抽屉会调用记忆搜索工具。
         </p>
       `;
     } finally {

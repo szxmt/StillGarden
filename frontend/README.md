@@ -5,20 +5,20 @@
 ## 启动
 
 ```powershell
-cd D:\A月亮啊\lunette\frontend\lunatte-v0.2
-.\start-stillgarden.ps1
+cd D:\Aaa.项目\lunatte
+.\start-lunatte.ps1
 ```
 
 或双击：
 
 ```text
-start-stillgarden.bat
+start-lunatte.bat
 ```
 
 默认端口：`8877`。服务会读取和写入：
 
 ```text
-D:\A月亮啊\lunette\sessions\prototype
+D:\Aaa.项目\lunatte\data\sessions\prototype
 ```
 
 ## 当前可用页面
@@ -39,23 +39,17 @@ D:\A月亮啊\lunette\sessions\prototype
 - JS 启动：`script.js`
 - JS 可复用层：`shared/`
 - Web controller：`web/`
-- Python 入口：`server.py`
-- HTTP routes：`routes/`
-- 业务服务：`services/`
-- 外部模型 provider：`providers/`
-- 数据 IO：`repositories/`
 
 具体写入规则看：
 
 ```text
-..\..\docs\engineering-rules.md
+..\docs\engineering-rules.md
 ```
 
 ## 检查
 
 ```powershell
 node --check script.js
-python -m py_compile server.py
 ```
 
-涉及 `shared/`、`web/`、`services/`、`routes/`、`providers/`、`repositories/` 时，要扩大检查范围。
+涉及 `shared/`、`web/` 时，要扩大检查范围。后端检查看 `backend/` 和根目录写入规则。

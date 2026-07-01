@@ -65,7 +65,7 @@ function initRoomTilesAndContext() {
       output.textContent =
         "现在是静态页面模式，还没有启动本地小窝服务。\n\n" +
         "如果只是看外观，直接这样打开就可以。\n" +
-        "如果要真的调用记忆工具，请运行同文件夹里的 start-stillgarden.bat。\n\n" +
+        "如果要真的调用记忆工具，请运行项目根目录里的 start-lunatte.bat。\n\n" +
         `当前房间：${rooms[room]?.title || room}\n` +
         `当前话题：${query}`;
     } finally {

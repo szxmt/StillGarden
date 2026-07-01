@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from server_config import DEFAULT_CONFIG, SERVICE_STARTED_AT, find_vault_root
+from server_config import DEFAULT_CONFIG, PROTOTYPE_DIR, SERVICE_STARTED_AT, find_vault_root
 from services.stats_service import build_stats
 
 
@@ -13,7 +13,7 @@ def health_get(params: dict[str, list[str]]) -> tuple[dict, int]:
             "ok": True,
             "service": "stillgarden-local",
             "vault": str(vault),
-            "sessions": str(vault / "sessions" / "prototype"),
+            "sessions": str(PROTOTYPE_DIR),
             "pid": os.getpid(),
             "started_at": SERVICE_STARTED_AT,
         }, 200

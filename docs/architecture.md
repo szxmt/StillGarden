@@ -3,35 +3,47 @@
 ## 顶层目录
 
 ```text
-lunette/
+lunatte/
   README.md
   docs/
-  frontend/lunatte-v0.2/
-  sessions/prototype/
-  gpt/
-  gemini/
-  self/
-  shared/
+  frontend/
+  backend/
   tools/
+  memory/                 local only, ignored
+    gpt/
+    gemini/
+    self/
+    shared/
+    incoming/
+  data/                   local only, ignored
+    sessions/prototype/
 ```
 
-`gpt/`、`gemini/`、`self/`、`shared/` 是记忆库资料，不是普通文档附件。
+`memory/` 是本地私有记忆材料，不进公开 Git。`data/` 是本地运行数据，不进公开 Git。
 
 ## 前端原型
 
 ```text
-frontend/lunatte-v0.2/
+frontend/
   index.html
   styles.css
   script.js
   shared/
   web/
   css/
+```
+
+## 后端原型
+
+```text
+backend/
   server.py
   routes/
   services/
   providers/
   repositories/
+  server_config.py
+  server_storage.py
 ```
 
 ## CSS 层级
@@ -76,9 +88,9 @@ styles.css
 
 ## 当前数据真源
 
-- 原型事件：`sessions/prototype/*.jsonl`
-- 配置：`sessions/prototype/config.json`
+- 原型事件：`data/sessions/prototype/*.jsonl`
+- 配置：`data/sessions/prototype/config.json`
 - secrets：本地 secret store，不返回前端明文。
-- 图片资产：`sessions/prototype/assets/`
+- 图片资产：`data/sessions/prototype/assets/`
 
 SQLite / FTS5 只能先做副本索引，不直接替换 JSONL。

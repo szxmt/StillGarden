@@ -194,7 +194,7 @@ memory-search-v0.1.md
 memory-context-v0.1.md
 product-vision-v0.1.md
 front-end-concept-v0.1.md
-frontend/lunatte-v0.2/
+frontend/
 software-roadmap-v0.1.md
 interaction-vision-v0.1.md
 aimas-hermes-integration-v0.1.md
@@ -237,12 +237,12 @@ aimas-hermes-integration-v0.1.md
 - 底部菜单已改为多页切换原型，不再只是长页滚动。
 - Session 原则已确认：林絮、噔噔、Aimas、客厅未来各自独立。
 - Chat 已接到上下文草稿：发送后按当前 session 生成待发送上下文。
-- Chat 已新增双层本地草稿日志：发送后先写浏览器草稿，再按当前 session 写入 `sessions/prototype/*.jsonl`。
+- Chat 已新增双层本地草稿日志：发送后先写浏览器草稿，再按当前 session 写入 `data/sessions/prototype/*.jsonl`。
 - Chat 切换 session 后会从浏览器草稿和文件草稿合并恢复最近消息。
 - Chat 页已新增本地服务状态灯：能区分“已连接 D 盘服务”和“静态预览/仅浏览器草稿”。
-- `start-stillgarden.bat` 已改成由服务启动后自动打开正确网址；默认改用 `8877`，避开旧 `8765` 服务。
-- V0.2 当前运行目录已统一为 `frontend/lunatte-v0.2`；启动脚本和 `/api/health` 已确认指向 `D:\A月亮啊\lunette-v0.2\sessions\prototype`，不是旧 `frontend/stillgarden-prototype-v0.1`。
-- CSS 第一轮拆分已完成：`styles.css` 作为入口，实际样式进入 `frontend/lunatte-v0.2/css/` 的 token、foundation、页面和组件模块。
+- `start-lunatte.bat` 已改成由服务启动后自动打开正确网址；默认改用 `8877`，避开旧 `8765` 服务。
+- 当前运行目录已统一为 `D:\Aaa.项目\lunatte`；启动脚本在项目根目录，前端为 `frontend`，后端为 `backend`，`/api/health` 指向 `D:\Aaa.项目\lunatte\data\sessions\prototype`。
+- CSS 第一轮拆分已完成：`styles.css` 作为入口，实际样式进入 `frontend/css/` 的 token、foundation、页面和组件模块。
 - JS 第一轮拆分已完成：`script.js` 作为 Web DOM 入口，通用配置、请求、状态读写、格式化和纯数据 helper 进入 `shared/lunatte-core.js`。
 - 后端第一轮拆分已完成：`server.py` 作为 HTTP 入口，路径/默认配置进入 `server_config.py`，JSON/JSONL、secrets、profile assets、prototype assets 存储 helper 进入 `server_storage.py`。
 - 当前拆分可以收口；后续按功能需要再拆，不再为了拆分本身继续无限小刀。
@@ -262,16 +262,16 @@ aimas-hermes-integration-v0.1.md
 - Chat 真实 API 已加入短期上下文：林絮、噔噔、Aimas 调用时会带入同房间最近 18 条 user/assistant 消息。
 - Chat 已加入对话模式提示：限制括号动作、舞台说明、虚构触碰和主动自称 AI，更偏自然聊天而不是剧本扮演。
 - Chat 保存状态已改成聊天框上方 toast 浮层，几秒后自动消失，不写进聊天流。
-- Chat 已新增本地 API 请求包：发送后会把消息、房间权限和上下文写入 `sessions/prototype/outbox/*.jsonl`；林絮/噔噔配置齐全时会继续真实调用模型。
+- Chat 已新增本地 API 请求包：发送后会把消息、房间权限和上下文写入 `data/sessions/prototype/outbox/*.jsonl`；林絮/噔噔配置齐全时会继续真实调用模型。
 - Archive 已新增记忆确认入口：可以手写记忆，也可以从当天当前房间 session 生成日摘要草稿。
-- Archive 确认入库会写入 `sessions/prototype/confirmed-memory.jsonl`；草稿写入 `sessions/prototype/memory-candidates.jsonl`，不确认不会进长期记忆。
+- Archive 确认入库会写入 `data/sessions/prototype/confirmed-memory.jsonl`；草稿写入 `data/sessions/prototype/memory-candidates.jsonl`，不确认不会进长期记忆。
 - Archive 索引刷新已完成轻量版：当前检索工具实时读取 confirmed-memory，刷新按钮用于确认状态和条数。
 - `tools/memory_search.py` 已接入 `confirmed_memory` 来源，并继续按林絮 / 噔噔 / shared / Aimas 隔离。
 - More 已拆分 API dry-run 配置与 Agent Connector：林絮默认走 OA/OpenAI，噔噔默认走 GG/Gemini；Aimas/Hermes 单独作为 future agent connector。
 - OA base_url 已预填为 `https://api.openai.com/v1`，GG base_url 已预填为 `https://generativelanguage.googleapis.com/v1beta`。
 - More 已改成 provider 下拉详情页：选择哪个 provider 就只显示哪个，不再把所有配置堆在一起。
 - More 已支持多个自定义 provider、改名、删除和补空位编号；自定义 provider 可分配给林絮或噔噔作为中转站路线，并按 OpenAI-compatible 接口调用。
-- Provider API Key 已接入本地 secrets：OA/GG/自定义 provider 的 key 只保存在 `sessions/prototype/secrets.local.json`，前端不回显明文。
+- Provider API Key 已接入本地 secrets：OA/GG/自定义 provider 的 key 只保存在 `data/sessions/prototype/secrets.local.json`，前端不回显明文。
 - 林絮/噔噔已接入真实 API 调用：请求包生成后，如果当前 provider 的 Base URL、Model、API Key 齐全，会继续调用真实模型并把 assistant 回复写回对应 session。
 - OA/OpenAI 与自定义 provider 走 OpenAI-compatible `/chat/completions`；GG/Gemini 走 Gemini `generateContent`。
 - 真实 API 调用现在有两层上下文：最近同房间聊天作为短期上下文，`memory_context.py` 按当前消息检索长期记忆候选。
@@ -282,13 +282,13 @@ aimas-hermes-integration-v0.1.md
 - Aimas / Hermes 接入已完成源码/文档评估：可接，但应走独立 Agent Connector，不应混进 provider 下拉。
 - Aimas 推荐路线：先做 Hermes `/health` 与 `/v1/models` 探针，再从 `/v1/chat/completions` 单轮调用开始，最后升级到 Hermes session API。
 - More 已加入 Aimas / Hermes 探针配置：endpoint、model、API_SERVER_KEY 服务端保存、测试连接按钮。
-- Aimas API key 明文只写入 `sessions/prototype/secrets.local.json`，不会从 `/api/config` 回传给前端。
+- Aimas API key 明文只写入 `data/sessions/prototype/secrets.local.json`，不会从 `/api/config` 回传给前端。
 - Aimas 房间已加入 Hermes 单轮真实回复：发送后仍生成本地请求包，再调用 Hermes `/v1/chat/completions` 显示 Aimas 气泡。
-- Aimas 回复已作为 `assistant` role 写入 `sessions/prototype/aimas.jsonl`，重启后可恢复双方最近消息。
+- Aimas 回复已作为 `assistant` role 写入 `data/sessions/prototype/aimas.jsonl`，重启后可恢复双方最近消息。
 - Aimas 已支持多气泡回复：一次 Hermes 返回最多拆成 3 条 assistant 气泡，保留聊天感并避免无限刷屏。
 - Aimas 工具/终端输出方向已记录：未来做“小电脑工作卡片”，默认折叠工具日志，不在聊天流刷屏；主动唤醒默认禁工具。
 - 林絮、噔噔在 provider 配置齐全时会调用真实 API；客厅仍保持 dry-run，不会因为 Aimas 接通而误调用 provider。
-- Wake / 醒醒入口已新增：当前可手动生成唤醒草稿，也可让小窝自动挑一位住户生成候选草稿；写入 `sessions/prototype/wake-inbox.jsonl`，不推送、不自动进聊天、不允许工具。
+- Wake / 醒醒入口已新增：当前可手动生成唤醒草稿，也可让小窝自动挑一位住户生成候选草稿；写入 `data/sessions/prototype/wake-inbox.jsonl`，不推送、不自动进聊天、不允许工具。
 - Wake 自动候选不需要用户指定话题，会按收件箱状态在林絮、噔噔、Aimas、客厅之间轮流探头；同一天每个住户最多保留一张自动候选，避免重复点导致刷屏。
 - Wake 放进聊天时只写入消息正文，不再把“放进信箱”和“理由”塞进聊天气泡；触发理由只作为收件箱元数据保留。
 - Wake 收件箱和自主入口已收到 More 里，不再占用底部菜单；后续常驻规则也放在这里维护。

@@ -70,7 +70,7 @@ async function loadTimeline() {
   }
   if (!serviceOnline) {
     if (statusNode) statusNode.textContent = "未连接本地服务：时间线暂时不能读取。";
-    listNode.innerHTML = `<p class="timeline-empty">请用 start-stillgarden.bat 打开本地服务。</p>`;
+    listNode.innerHTML = `<p class="timeline-empty">请用 start-lunatte.bat 打开本地服务。</p>`;
     return;
   }
   if (statusNode) statusNode.textContent = "正在读取本地时间线...";

@@ -34,11 +34,9 @@ secrets.local.json
 # Local generated preview artifacts
 preview-*.tmp
 
-# Raw exported archives are kept in the local workspace but exceed normal GitHub limits.
-# Do not ignore source, docs, sessions/prototype json/jsonl data, or memory index files.
-gpt/raw/*.zip
-gemini/raw/*.zip
-incoming/**/*.zip
+# Private memory materials and runtime data must stay local.
+memory/
+data/
 
 # Local reference dumps: keep raw research material local, but allow curated markdown summaries.
 docs/references/*

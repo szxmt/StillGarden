@@ -106,8 +106,9 @@ DEFAULT_CONFIG = {
 }
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-PROTOTYPE_DIR = PROJECT_ROOT / "sessions" / "prototype"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+FRONTEND_ROOT = PROJECT_ROOT / "frontend"
+PROTOTYPE_DIR = PROJECT_ROOT / "data" / "sessions" / "prototype"
 
 
 def count_jsonl(path: Path) -> int:

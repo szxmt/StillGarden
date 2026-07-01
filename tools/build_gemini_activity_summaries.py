@@ -82,7 +82,7 @@ def clean_summary(text: str, limit: int = 72) -> str:
 
 
 def load_phase_map(base: Path) -> dict[int, dict]:
-    path = base / "gemini" / "parsed" / "phase_index.jsonl"
+    path = base / "memory" / "gemini" / "parsed" / "phase_index.jsonl"
     data: dict[int, dict] = {}
     if not path.exists():
         return data
@@ -94,7 +94,7 @@ def load_phase_map(base: Path) -> dict[int, dict]:
 
 
 def parse_cards(base: Path) -> list[dict]:
-    html_path = next((base / "gemini" / "raw" / "gemini-apps-text").glob("*.html"))
+    html_path = next((base / "memory" / "gemini" / "raw" / "gemini-apps-text").glob("*.html"))
     raw = html_path.read_text(encoding="utf-8", errors="ignore")
     cards = re.findall(
         r'<div class="outer-cell[^>]*>.*?(?=<div class="outer-cell|</body>|</html>)',
@@ -145,7 +145,7 @@ def write_report(base: Path, rows: list[dict]) -> None:
     flagged = sum(1 for row in rows if row["flags"])
     text = f"""# 噔噔活动摘要映射报告
 
-本报告说明 `gemini/parsed/activity_summaries.*` 的生成状态。
+本报告说明 `memory/gemini/parsed/activity_summaries.*` 的生成状态。
 
 ## 总览
 
@@ -157,8 +157,8 @@ def write_report(base: Path, rows: list[dict]) -> None:
 ## 输出文件
 
 ```text
-gemini/parsed/activity_summaries.jsonl
-gemini/parsed/activity_summaries.csv
+memory/gemini/parsed/activity_summaries.jsonl
+memory/gemini/parsed/activity_summaries.csv
 ```
 
 ## 用途
@@ -168,16 +168,16 @@ gemini/parsed/activity_summaries.csv
 - 摘要被截断并做了基础脱敏。
 - 带敏感标记的记录默认不参与普通检索。
 """
-    (base / "gemini" / "activity-summary-report.md").write_text(text, encoding="utf-8")
+    (base / "memory" / "gemini" / "activity-summary-report.md").write_text(text, encoding="utf-8")
 
 
 def main() -> None:
     base = base_dir()
     rows = parse_cards(base)
-    write_jsonl(base / "gemini" / "parsed" / "activity_summaries.jsonl", rows)
-    write_csv(base / "gemini" / "parsed" / "activity_summaries.csv", rows)
+    write_jsonl(base / "memory" / "gemini" / "parsed" / "activity_summaries.jsonl", rows)
+    write_csv(base / "memory" / "gemini" / "parsed" / "activity_summaries.csv", rows)
     write_report(base, rows)
-    print(json.dumps({"rows": len(rows), "report": str(base / "gemini" / "activity-summary-report.md")}, ensure_ascii=False, indent=2))
+    print(json.dumps({"rows": len(rows), "report": str(base / "memory" / "gemini" / "activity-summary-report.md")}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

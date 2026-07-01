@@ -18,7 +18,7 @@ async function loadHomeStats() {
   } catch (error) {
     status.innerHTML = `
       <span>STATIC MODE</span>
-      <p>现在是静态页面。双击 start-stillgarden.bat 后，Home 会读取 D 盘记忆库的真实统计。</p>
+      <p>现在是静态页面。双击 start-lunatte.bat 后，Home 会读取本地 memory/data 的真实统计。</p>
     `;
   }
 }
@@ -32,7 +32,7 @@ async function loadServiceStatus() {
   if (window.location.protocol === "file:") {
     serviceOnline = false;
     label.textContent = "未连接";
-    status.title = "静态预览：当前是直接打开文件，只会保存到这个浏览器。请用 start-stillgarden.bat 打开的网页来写入 D 盘。";
+    status.title = "静态预览：当前是直接打开文件，只会保存到这个浏览器。请用 start-lunatte.bat 打开的网页来写入 D 盘。";
     status.className = "service-pill offline";
     return;
   }

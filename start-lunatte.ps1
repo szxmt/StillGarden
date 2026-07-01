@@ -7,4 +7,4 @@ foreach ($pidValue in $owners) {
     Stop-Process -Id $pidValue -Force -ErrorAction SilentlyContinue
   }
 }
-python .\server.py
+python .\backend\server.py

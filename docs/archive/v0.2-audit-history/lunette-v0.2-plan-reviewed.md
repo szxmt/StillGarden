@@ -13,11 +13,11 @@
 
 结论：
 
-- 当前稳定 V0.1 是唯一运行基准，不能删除、移动、覆盖，也不能直接改动原始 `sessions/prototype`。
+- 当前稳定 V0.1 是唯一运行基准，不能删除、移动、覆盖，也不能直接改动原始 `data/sessions/prototype`。
 - Antigravity 代码版本和当前 V0.1 内容不同，不能作为覆盖源。
 - Antigravity 代码版本仍然有价值：它包含 CSS 拆分、主题切换、自定义下拉框、profile 面板修正和一些临时补丁脚本，可作为 patch source。
 - Project-Docs 是规划资料源，应该导入 V0.2 的 `docs/imported-antigravity/`，但不能当源码执行。
-- V0.2 应建立为独立工作区：`D:\A月亮啊\lunette-v0.2`。
+- V0.2 应建立为独立工作区：`D:\Aaa.项目\lunatte-v0.2`。
 - V0.2 初始代码应来自当前稳定 V0.1；Antigravity 内容只能逐项审计、逐项合并。
 
 ## 2. 三个目录文件树摘要
@@ -59,26 +59,26 @@ memory-vault-starter/
       script.js
       server.py
       README.md
-      start-stillgarden.bat
-      start-stillgarden.ps1
+      start-lunatte.bat
+      start-lunatte.ps1
 ```
 
 运行入口：
 
-- 前端入口：`frontend/lunatte-v0.2/index.html`
-- 样式入口：`frontend/lunatte-v0.2/styles.css`
-- 逻辑入口：`frontend/lunatte-v0.2/script.js`
-- 本地后端：`frontend/lunatte-v0.2/server.py`
+- 前端入口：`frontend/index.html`
+- 样式入口：`frontend/styles.css`
+- 逻辑入口：`frontend/script.js`
+- 本地后端：`backend/server.py`
 - 启动脚本：
-  - `frontend/lunatte-v0.2/start-stillgarden.bat`
-  - `frontend/lunatte-v0.2/start-stillgarden.ps1`
+  - `start-lunatte.bat`
+  - `start-lunatte.ps1`
 
 当前形态：
 
 - CSS 仍是单文件 `styles.css`。
 - JS 仍是单文件 `script.js`。
 - 后端仍是单文件 `server.py`。
-- `sessions/prototype` 是原型数据目录。
+- `data/sessions/prototype` 是原型数据目录。
 - 根目录记忆库索引、说明、路由文件都属于项目文件，V0.2 必须保留副本。
 
 ### 2.2 Antigravity 代码版本
@@ -196,18 +196,18 @@ Project-Docs/
 
 同名但内容不同：
 
-- `frontend/lunatte-v0.2/index.html`
-- `frontend/lunatte-v0.2/styles.css`
-- `frontend/lunatte-v0.2/script.js`
-- `frontend/lunatte-v0.2/server.py`
+- `frontend/index.html`
+- `frontend/styles.css`
+- `frontend/script.js`
+- `backend/server.py`
 
 同名且内容一致：
 
 - 根 `README.md`
 - `tools/README.md`
-- `frontend/lunatte-v0.2/README.md`
-- `frontend/lunatte-v0.2/start-stillgarden.bat`
-- `frontend/lunatte-v0.2/start-stillgarden.ps1`
+- `frontend/README.md`
+- `start-lunatte.bat`
+- `start-lunatte.ps1`
 
 只存在于 Antigravity 的重点文件：
 
@@ -306,7 +306,7 @@ Project-Docs/
 V0.2 目标路径：
 
 ```text
-D:\A月亮啊\lunette-v0.2
+D:\Aaa.项目\lunatte-v0.2
 ```
 
 V0.2 初始原则：
@@ -316,7 +316,7 @@ V0.2 初始原则：
 - 直接保留当前记忆库根结构，便于和 V0.1 对比。
 - Antigravity 代码版本只作为差异来源和 patch source。
 - Project-Docs 只作为文档来源导入。
-- V0.2 使用自己的 `sessions/prototype` 数据副本测试。
+- V0.2 使用自己的 `data/sessions/prototype` 数据副本测试。
 - V0.2 不直接写 V0.1 原始数据。
 
 建议 V0.2 结构：
@@ -345,8 +345,8 @@ lunette-v0.2/
       script.js
       server.py
       README.md
-      start-stillgarden.bat
-      start-stillgarden.ps1
+      start-lunatte.bat
+      start-lunatte.ps1
 ```
 
 阶段计划：
@@ -365,7 +365,7 @@ lunette-v0.2/
 
 目标：
 
-- 新建 `D:\A月亮啊\lunette-v0.2`。
+- 新建 `D:\Aaa.项目\lunatte-v0.2`。
 - 从稳定 V0.1 复制全部当前项目内容。
 - 导入 Project-Docs 到 `docs/imported-antigravity/`。
 - 创建 V0.2 README、`.gitignore`、审计计划文档。
@@ -414,8 +414,8 @@ lunette-v0.2/
 ## 7. 数据安全规则
 
 - V0.1 原目录不可删除、移动、覆盖。
-- V0.1 的 `sessions/prototype` 不可直接写入。
-- V0.2 必须使用复制后的 `D:\A月亮啊\lunette-v0.2\sessions\prototype` 测试。
+- V0.1 的 `data/sessions/prototype` 不可直接写入。
+- V0.2 必须使用复制后的 `D:\Aaa.项目\lunatte-v0.2\data\\sessions\\prototype` 测试。
 - 原始导出文件保留本地副本。
 - GitHub 不适合直接推送超过 100MB 的原始 zip；这类文件保留在本地工作区，可通过 `.gitignore` 排除出 Git。
 - 记忆库索引、说明文档、路由脚本、结构文档属于项目文件，不能遗漏。
@@ -451,11 +451,11 @@ D:\Antigravity\Lunette\memory-vault-starter
 4. 只引入 CSS 目录结构，不改变业务 JS。
 5. 修改 HTML 样式入口前先确认缓存版本。
 6. 跑静态检查：
-   - `node --check frontend/lunatte-v0.2/script.js`
-   - `python -m py_compile frontend/lunatte-v0.2/server.py`
+   - `node --check frontend/script.js`
+   - `python -m py_compile backend/server.py`
 7. 启动 V0.2 本地服务测试，不占用长期隐藏服务。
 8. 验证 Archive、Self、Moments、Timeline、Auto Reply 基础链路。
-9. 确认数据写入 V0.2 的 `sessions/prototype` 副本。
+9. 确认数据写入 V0.2 的 `data/sessions/prototype` 副本。
 10. 每完成一个合并主题就提交一次。
 
 ## 10. 当前执行结论
@@ -500,7 +500,7 @@ V0.2 工作区内现在同时存在多类材料。它们不是同一种东西，
 来源：
 
 ```text
-frontend/lunatte-v0.2/
+frontend/
 ```
 
 角色：
@@ -604,14 +604,14 @@ V0.1 根目录蓝图是项目主线，前端原型只是主线下的一个可运
 关系口径：
 
 - 根目录文档定义“要做什么”和“边界是什么”。
-- `frontend/lunatte-v0.2` 验证“当前哪些东西已经能点、能写、能看”。
-- `sessions/prototype` 是原型数据副本，不是最终数据库。
+- `frontend` 验证“当前哪些东西已经能点、能写、能看”。
+- `data/sessions/prototype` 是原型数据副本，不是最终数据库。
 - `tools/` 里的检索脚本是本地记忆能力的早期实现，不是最终后端架构。
 - `gpt/`、`gemini/`、`self/`、`shared/` 是长期记忆和权限体系，不是 UI 附件。
 
 当前重要结论：
 
-- V0.2 不能只围绕 `frontend/lunatte-v0.2` 重构。
+- V0.2 不能只围绕 `frontend` 重构。
 - 前端拆分、后端拆分、数据库草图都必须保护根目录记忆库规则。
 - 后续 RAG 不是把旧记录灌给模型模仿，而是把记忆、证据、时间线和权限作为可参考背景。
 - 最终目标不是聊天人格、评论人格、发圈人格分裂，而是同一住户系统通过不同入口回应。
@@ -720,7 +720,7 @@ V0.2 处理结论：
 | 任务 | 来源 | 状态 | 说明 |
 |---|---|---|---|
 | 保护 V0.1 根目录蓝图、记忆库索引、隔离规则 | V0.1 蓝图 | 已完成 | 已复制进 V0.2，后续改动必须继续保护 |
-| 保持当前原型可启动 | 当前可运行原型 | 已完成 | `frontend/lunatte-v0.2` 是当前运行基准 |
+| 保持当前原型可启动 | 当前可运行原型 | 已完成 | `frontend` 是当前运行基准 |
 | Archive 正式记忆卡、确认记忆列表 | 当前可运行原型 | 已完成 | 已写入 `confirmed-memory.jsonl` 副本 |
 | Self 总开关和三子开关 | 当前可运行原型 | 已完成 | 请求包按开关带入 self |
 | Moments 手动真实评论 | 当前可运行原型 | 已完成 | 三个住户可反复触发 |

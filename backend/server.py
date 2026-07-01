@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 from routes.router import max_body_bytes, route_get, route_post
-from server_config import prototype_assets_root
+from server_config import FRONTEND_ROOT, prototype_assets_root
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -86,8 +86,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parent
-    os.chdir(root)
+    os.chdir(FRONTEND_ROOT)
 
     requested_port = int(os.environ.get("STILLGARDEN_PORT", "8877"))
     ports = [requested_port] if "STILLGARDEN_PORT" in os.environ else range(requested_port, requested_port + 10)

@@ -124,7 +124,7 @@ async function sendChatDraft() {
     .catch((error) => {
       contextOutput.textContent =
         "这次没有完成发送链路。\n\n" +
-        "如果是静态页面，请启动 start-stillgarden.bat。若 Aimas 探针已通过但聊天失败，请看 Hermes 网关日志。\n\n" +
+        "如果是静态页面，请启动 start-lunatte.bat。若 Aimas 探针已通过但聊天失败，请看 Hermes 网关日志。\n\n" +
         `当前原因：${error.message}\n` +
         `当前 session：${profile.name}\n` +
         `当前消息：${text}`;

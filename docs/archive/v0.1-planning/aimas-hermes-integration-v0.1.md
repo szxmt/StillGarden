@@ -120,7 +120,7 @@ hermes profile create aimas
 当前已完成：
 
 - More 页已加入 Aimas Endpoint、Model、API Key 输入。
-- API Key 会保存到 `sessions/prototype/secrets.local.json`。
+- API Key 会保存到 `data/sessions/prototype/secrets.local.json`。
 - `/api/config` 不回传明文 key，只回传 `key_saved`。
 - 已加入“测试 Hermes 连接”按钮。
 - 已加入本地 `/api/aimas-probe`，会测试 `/health` 与 `/v1/models`。

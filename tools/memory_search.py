@@ -29,7 +29,7 @@ def read_jsonl(path: Path) -> list[dict]:
 
 def load_activity_summaries(base: Path) -> dict[int, dict]:
     summaries = {}
-    path = base / "gemini" / "parsed" / "activity_summaries.jsonl"
+    path = base / "memory" / "gemini" / "parsed" / "activity_summaries.jsonl"
     for row in read_jsonl(path):
         try:
             summaries[int(row["activity_index"])] = row
@@ -118,28 +118,28 @@ def score_row(row: dict, terms: list[str], phase: str | None = None) -> int:
 def candidate_sources(base: Path, target: str) -> list[tuple[str, Path]]:
     if target == "alice":
         return [
-            ("confirmed_memory", base / "sessions" / "prototype" / "confirmed-memory.jsonl"),
-            ("gpt_daily", base / "gpt" / "parsed" / "daily_companionship_index.jsonl"),
-            ("gpt_relationship", base / "gpt" / "parsed" / "relationship_node_index.jsonl"),
-            ("gpt_conversation", base / "gpt" / "parsed" / "conversation_index.jsonl"),
-            ("incoming_chat", base / "self" / "reports" / "incoming_chat_index.jsonl"),
-            ("persona_evidence", base / "gpt" / "parsed" / "persona_evidence_extracts.jsonl"),
+            ("confirmed_memory", base / "data" / "sessions" / "prototype" / "confirmed-memory.jsonl"),
+            ("gpt_daily", base / "memory" / "gpt" / "parsed" / "daily_companionship_index.jsonl"),
+            ("gpt_relationship", base / "memory" / "gpt" / "parsed" / "relationship_node_index.jsonl"),
+            ("gpt_conversation", base / "memory" / "gpt" / "parsed" / "conversation_index.jsonl"),
+            ("incoming_chat", base / "memory" / "self" / "reports" / "incoming_chat_index.jsonl"),
+            ("persona_evidence", base / "memory" / "gpt" / "parsed" / "persona_evidence_extracts.jsonl"),
         ]
     if target == "dengdeng":
         return [
-            ("confirmed_memory", base / "sessions" / "prototype" / "confirmed-memory.jsonl"),
-            ("gemini_daily", base / "gemini" / "parsed" / "daily_companionship_index.jsonl"),
-            ("gemini_relationship", base / "gemini" / "parsed" / "relationship_node_index.jsonl"),
-            ("gemini_phase", base / "gemini" / "parsed" / "phase_index.jsonl"),
-            ("incoming_chat", base / "self" / "reports" / "incoming_chat_index.jsonl"),
+            ("confirmed_memory", base / "data" / "sessions" / "prototype" / "confirmed-memory.jsonl"),
+            ("gemini_daily", base / "memory" / "gemini" / "parsed" / "daily_companionship_index.jsonl"),
+            ("gemini_relationship", base / "memory" / "gemini" / "parsed" / "relationship_node_index.jsonl"),
+            ("gemini_phase", base / "memory" / "gemini" / "parsed" / "phase_index.jsonl"),
+            ("incoming_chat", base / "memory" / "self" / "reports" / "incoming_chat_index.jsonl"),
         ]
     if target == "aimas":
         return [
-            ("confirmed_memory", base / "sessions" / "prototype" / "confirmed-memory.jsonl"),
+            ("confirmed_memory", base / "data" / "sessions" / "prototype" / "confirmed-memory.jsonl"),
         ]
     return [
-        ("confirmed_memory", base / "sessions" / "prototype" / "confirmed-memory.jsonl"),
-        ("incoming_chat", base / "self" / "reports" / "incoming_chat_index.jsonl"),
+        ("confirmed_memory", base / "data" / "sessions" / "prototype" / "confirmed-memory.jsonl"),
+        ("incoming_chat", base / "memory" / "self" / "reports" / "incoming_chat_index.jsonl"),
     ]
 
 

@@ -4,12 +4,12 @@
 
 当前原型以 JSONL 为真源：
 
-- `sessions/prototype/linxu.jsonl`
-- `sessions/prototype/dengdeng.jsonl`
-- `sessions/prototype/aimas.jsonl`
-- `sessions/prototype/moments.jsonl`
-- `sessions/prototype/confirmed-memory.jsonl`
-- `sessions/prototype/wake-inbox.jsonl`
+- `data/sessions/prototype/linxu.jsonl`
+- `data/sessions/prototype/dengdeng.jsonl`
+- `data/sessions/prototype/aimas.jsonl`
+- `data/sessions/prototype/moments.jsonl`
+- `data/sessions/prototype/confirmed-memory.jsonl`
+- `data/sessions/prototype/wake-inbox.jsonl`
 
 后端已经通过 `repositories/` 包住 JSONL/assets/config IO。
 
@@ -18,7 +18,7 @@
 - JSONL 继续作为原始记录和回滚基础。
 - SQLite / FTS5 先做副本索引，不直接替换 JSONL。
 - 向量库 / RAG 只提供上下文证据，不替代人格生成。
-- 任何迁移都使用 `sessions/prototype` 副本验证。
+- 任何迁移都使用 `data/sessions/prototype` 副本验证。
 
 ## 事件模型
 
