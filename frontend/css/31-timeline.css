@@ -7,7 +7,7 @@
   overflow: hidden;
   border: 1px solid var(--line-14);
   border-radius: var(--radius-card);
-  background: var(--surface-white-44);
+  background: rgba(255, 255, 255, 0.44);
   list-style: none;
 }
 
@@ -18,7 +18,7 @@
   top: 34px;
   bottom: 34px;
   width: 1px;
-  background: linear-gradient(var(--rose-300), var(--line-accent-16), transparent);
+  background: linear-gradient(var(--accent-soft), var(--line-accent-16), transparent);
 }
 
 .timeline li {
@@ -37,7 +37,7 @@
   height: 13px;
   border: 3px solid var(--surface-white-96);
   border-radius: 50%;
-  background: var(--rose-300);
+  background: var(--accent-soft);
   box-shadow: 0 0 0 1px var(--line);
 }
 
@@ -53,10 +53,12 @@
   display: grid;
   gap: var(--space-12);
   margin-bottom: 18px;
-  padding: var(--space-16);
+  padding: var(--space-15);
   border: 1px solid var(--line-14);
   border-radius: var(--radius-card);
-  background: var(--surface-white-52);
+  background: var(--card-bg);
+  box-shadow: 0 12px 30px rgba(74, 93, 108, 0.06);
+  backdrop-filter: blur(18px) saturate(1.12);
 }
 
 .timeline-live-head {
@@ -101,7 +103,7 @@
   color: var(--text-soft);
   border: 1px solid var(--line-16);
   border-radius: var(--radius-pill);
-  background: var(--surface-white-70);
+  background: var(--field-bg);
   font: inherit;
   font-size: 0.8rem;
 }
@@ -113,7 +115,7 @@
   color: var(--text-soft);
   border: 1px solid var(--line-16);
   border-radius: var(--radius-pill);
-  background: var(--surface-white-65);
+  background: rgba(255, 255, 255, 0.64);
   font-size: 0.78rem;
 }
 
@@ -132,12 +134,12 @@
 
 .timeline-event {
   display: block;
-  min-height: 70px;
-  margin-bottom: 9px;
-  padding: var(--space-11) var(--space-12);
+  min-height: 68px;
+  margin-bottom: 8px;
+  padding: var(--space-10) var(--space-12);
   border: 1px solid var(--line-11);
-  border-radius: var(--radius-xl);
-  background: var(--surface-paper-alt);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.58);
   overflow: visible;
   transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
 }
@@ -148,8 +150,8 @@
 
 .timeline-event[open] {
   border-color: var(--line-accent-16);
-  background: var(--surface-paper-90);
-  box-shadow: 0 12px 24px var(--shadow-blush-08);
+  background: rgba(247, 250, 252, 0.9);
+  box-shadow: 0 10px 24px rgba(74, 93, 108, 0.08);
 }
 
 .timeline-event summary {
@@ -191,7 +193,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  color: var(--raw-hex-6f5261);
+  color: var(--text-subtle);
   font-size: 0.9rem;
 }
 
@@ -223,7 +225,7 @@
 .timeline-event-detail p {
   display: block;
   overflow: visible;
-  color: var(--raw-hex-5f4c57);
+  color: var(--text-subtle);
   font-size: 0.88rem;
   white-space: pre-wrap;
 }
@@ -244,7 +246,7 @@
 }
 
 .timeline-pager span {
-  color: var(--raw-hex-8a6f7d);
+  color: var(--text-faint-2);
   font-size: 0.78rem;
   text-align: center;
 }

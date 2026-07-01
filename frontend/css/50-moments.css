@@ -1,13 +1,12 @@
 .moment-hero {
   position: relative;
-  min-height: 294px;
-  margin: 0 0 var(--space-76);
+  min-height: 246px;
+  margin: 0 0 var(--space-64);
   border-radius: var(--radius-0);
   overflow: visible;
   background:
-    linear-gradient(180deg, var(--raw-raw-rgba-98-57-78-0-16), var(--raw-raw-rgba-255-255-255-0) 34%, var(--raw-raw-rgba-255-246-250-0-76) 100%),
-    radial-gradient(circle at 20% 20%, var(--raw-raw-rgba-255-255-255-0-86), transparent 7rem),
-    linear-gradient(135deg, var(--raw-raw-rgba-255-218-232-0-95), var(--raw-raw-rgba-238-226-255-0-9) 52%, var(--raw-raw-rgba-255-248-236-0-92));
+    linear-gradient(180deg, rgba(44, 64, 86, 0.1), rgba(255, 255, 255, 0) 36%, rgba(247, 250, 252, 0.78) 100%),
+    linear-gradient(120deg, rgba(223, 229, 238, 0.92), rgba(247, 250, 252, 0.78) 48%, rgba(245, 242, 234, 0.9));
   background-size: cover;
   background-position: center;
   box-shadow: inset 0 -1px 0 var(--line-12);
@@ -23,11 +22,11 @@
   height: 40px;
   place-items: center;
   padding: var(--space-0);
-  color: var(--text-soft);
-  border: 1px solid var(--surface-white-55);
-  border-radius: var(--radius-lg);
-  background: var(--surface-white-52);
-  backdrop-filter: blur(14px);
+  color: var(--accent-deep);
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.52);
+  backdrop-filter: blur(16px) saturate(1.12);
 }
 
 .moment-cover-button {
@@ -36,10 +35,10 @@
   right: 62px;
   z-index: 2;
   padding: var(--space-8) var(--space-10);
-  color: var(--text-soft);
+  color: var(--accent-deep);
   border: 1px solid var(--surface-white-55);
   border-radius: var(--radius-pill);
-  background: var(--surface-white-50);
+  background: rgba(255, 255, 255, 0.5);
   font-size: 0.72rem;
   backdrop-filter: blur(14px);
 }
@@ -88,16 +87,16 @@
   color: var(--text-strong);
   font-family: var(--serif);
   font-weight: 500;
-  text-shadow: 0 1px 0 var(--raw-raw-rgba-255-255-255-0-8);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .moment-owner .conversation-avatar {
-  width: 74px;
-  height: 74px;
-  border: 4px solid var(--surface-white-96);
-  border-radius: var(--radius-card);
-  background-color: var(--raw-raw-rgba-255-247-251-0-96);
-  box-shadow: 0 14px 28px var(--shadow-rose-14);
+  width: 68px;
+  height: 68px;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-lg);
+  background-color: rgba(247, 250, 252, 0.96);
+  box-shadow: 0 12px 26px rgba(74, 93, 108, 0.14);
   cursor: pointer;
 }
 
@@ -112,8 +111,9 @@
   margin-left: 18px;
   padding: var(--space-16);
   border: 1px solid var(--line-14);
-  border-radius: var(--radius-2xl);
-  background: var(--surface-white-48);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: 0 12px 30px rgba(74, 93, 108, 0.06);
 }
 
 #momentsPanel.is-composing {
@@ -290,7 +290,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   outline: none;
-  background: var(--surface-white-68);
+  background: var(--field-bg);
   font: inherit;
   line-height: 1.65;
 }
@@ -352,7 +352,7 @@
 
 .moments-feed {
   display: grid;
-  gap: var(--space-14);
+  gap: var(--space-12);
   margin-right: 18px;
   margin-left: 18px;
   margin-top: 16px;
@@ -360,15 +360,16 @@
 
 .moment-card {
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: var(--space-12);
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: var(--space-10);
   align-items: start;
-  padding: var(--space-14) var(--space-12);
-  border: 1px solid var(--line-14);
-  border-radius: var(--radius-2xl);
+  padding: var(--space-12);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius-card);
   background:
-    radial-gradient(circle at 92% 8%, var(--raw-raw-rgba-255-255-255-0-88), transparent 5rem),
-    var(--surface-white-50);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(247, 250, 252, 0.36)),
+    var(--card-bg);
+  box-shadow: 0 10px 24px rgba(74, 93, 108, 0.05);
 }
 
 .moment-body {
@@ -387,8 +388,8 @@
 
 .moment-avatar-button {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   place-items: start;
   padding: var(--space-0);
   border: 0;
@@ -396,9 +397,9 @@
 }
 
 .moment-card .moment-avatar-button .conversation-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-lg);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
 }
 
 .moment-body header strong {
@@ -418,15 +419,16 @@
 .moment-body > p {
   margin: var(--space-0);
   color: var(--text-subtle);
-  line-height: 1.72;
+  font-size: 0.9rem;
+  line-height: 1.62;
   white-space: pre-wrap;
 }
 
 .moment-comments {
-  padding: var(--space-10) var(--space-12);
+  padding: var(--space-9) var(--space-11);
   color: var(--text-muted-strong);
   border-radius: var(--radius-lg);
-  background: var(--raw-raw-rgba-255-244-249-0-68);
+  background: rgba(236, 238, 243, 0.6);
   font-size: 0.84rem;
 }
 

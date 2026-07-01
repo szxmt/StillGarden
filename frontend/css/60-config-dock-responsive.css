@@ -31,6 +31,8 @@
   display: block;
 }
 
+.route-grid {
+  display: grid;
   gap: var(--space-14);
 }
 
@@ -42,8 +44,8 @@
   gap: var(--space-8);
   padding: var(--space-12);
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background: var(--surface-white-46);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.46);
 }
 
 .route-grid strong {
@@ -57,7 +59,7 @@
   margin-top: 18px;
   padding: var(--space-16);
   background:
-    linear-gradient(135deg, var(--raw-raw-rgba-255-234-243-0-36), var(--surface-white-50));
+    linear-gradient(135deg, rgba(236, 238, 243, 0.42), rgba(255, 255, 255, 0.5));
 }
 
 .provider-actions {
@@ -74,8 +76,8 @@
   gap: var(--space-10);
   padding: var(--space-12);
   border: 1px solid var(--line-14);
-  border-radius: var(--radius-xl);
-  background: var(--raw-raw-rgba-255-255-255-0-38);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .custom-provider-head {
@@ -112,11 +114,11 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   outline: none;
-  background: var(--surface-white-68);
+  background: var(--field-bg);
 }
 
 .custom-provider-remove {
-  color: var(--raw-hex-a26578);
+  color: var(--text-soft);
 }
 
 .config-lock {
@@ -157,8 +159,8 @@
 .moment-auto-card {
   padding: var(--space-10);
   border: 1px solid var(--line-10);
-  border-radius: var(--radius-2xl);
-  background: var(--raw-raw-rgba-255-250-253-0-38);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.38);
 }
 
 .status-rule-group .config-status,
@@ -188,7 +190,7 @@
   width: calc(100% - 12px);
   padding-inline: 16px;
   border-radius: var(--radius-lg);
-  background: var(--raw-raw-rgba-255-248-251-0-62);
+  background: rgba(247, 250, 252, 0.62);
 }
 
 .self-reader-list .status-line span {
@@ -212,12 +214,12 @@
   justify-content: center;
   gap: var(--space-2);
   border: 0;
-  border-top: 1px solid var(--line-16);
+  border-top: 1px solid var(--line-12);
   border-radius: var(--radius-0);
   background:
-    linear-gradient(180deg, var(--raw-raw-rgba-255-250-252-0-9), var(--raw-raw-rgba-255-246-250-0-96));
-  box-shadow: 0 -12px 28px var(--raw-raw-rgba-255-246-250-0-92);
-  backdrop-filter: blur(22px);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(247, 250, 252, 0.92));
+  box-shadow: 0 -10px 24px rgba(74, 93, 108, 0.08);
+  backdrop-filter: blur(22px) saturate(1.14);
 }
 
 .phone-shell.chat-focus .dock {
@@ -248,7 +250,7 @@
   width: 26px;
   height: 26px;
   place-items: center;
-  color: var(--raw-hex-9a7183);
+  color: var(--accent-muted);
   border-radius: var(--radius-pill);
   font-style: normal;
   font-size: 1.02rem;
@@ -288,11 +290,11 @@
 }
 
 .dock-item.active i {
-  color: var(--raw-hex-9b3f68);
+  color: var(--accent-deep);
   background:
-    radial-gradient(circle at 35% 22%, var(--raw-raw-rgba-255-255-255-0-95), transparent 48%),
-    var(--raw-raw-rgba-255-214-232-0-92);
-  box-shadow: 0 9px 18px var(--line-accent-16);
+    radial-gradient(circle at 35% 22%, rgba(255, 255, 255, 0.95), transparent 48%),
+    rgba(223, 229, 238, 0.92);
+  box-shadow: 0 8px 16px rgba(76, 99, 120, 0.16);
   transform: translateY(-2px);
 }
 

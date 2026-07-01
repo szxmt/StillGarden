@@ -1,10 +1,12 @@
 .archive-search,
 .memory-confirm-panel {
   margin-bottom: 16px;
-  padding: var(--space-16);
+  padding: var(--space-15);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  background: var(--surface-white-48);
+  background: var(--card-bg);
+  box-shadow: 0 12px 30px rgba(74, 93, 108, 0.06);
+  backdrop-filter: blur(18px) saturate(1.12);
 }
 
 .archive-search > span,
@@ -47,12 +49,12 @@
 .memory-field select,
 .memory-field textarea {
   min-width: 0;
-  padding: var(--space-11) var(--space-12);
+  padding: var(--space-10) var(--space-12);
   color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: var(--radius-15);
+  border-radius: var(--radius-md);
   outline: none;
-  background: var(--surface-white-68);
+  background: var(--field-bg);
 }
 
 .search-row select:focus,
@@ -60,8 +62,8 @@
 .memory-field input:focus,
 .memory-field select:focus,
 .memory-field textarea:focus {
-  border-color: var(--raw-raw-rgba-184-95-130-0-38);
-  box-shadow: 0 0 0 4px var(--raw-raw-rgba-214-126-161-0-12);
+  border-color: rgba(76, 99, 120, 0.38);
+  box-shadow: 0 0 0 4px rgba(76, 99, 120, 0.1);
 }
 
 .memory-row {
@@ -104,8 +106,8 @@
   padding: 0 var(--space-12);
   color: var(--text-muted-strong);
   border: 1px solid var(--line);
-  border-radius: var(--radius-15);
-  background: var(--surface-white-55);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.54);
   font-size: 0.82rem;
   white-space: nowrap;
 }
@@ -132,8 +134,8 @@
 .confirmed-memory-card {
   padding: var(--space-13);
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background: var(--raw-raw-rgba-255-255-255-0-56);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.56);
 }
 
 .confirmed-memory-card strong {
@@ -166,8 +168,8 @@
   color: white;
   border: 0;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-  box-shadow: 0 14px 24px var(--raw-raw-rgba-184-95-130-0-18);
+  background: var(--send-bg);
+  box-shadow: 0 12px 24px rgba(44, 64, 86, 0.16);
 }
 
 .archive-search-button:disabled {
@@ -192,7 +194,7 @@
   padding: var(--space-12);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: var(--paper);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .archive-result-head strong {
@@ -204,10 +206,10 @@
 .archive-result-card {
   padding: var(--space-14);
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   background:
-    linear-gradient(90deg, var(--raw-raw-rgba-184-95-130-0-07) 1px, transparent 1px),
-    var(--surface-white-58);
+    linear-gradient(90deg, var(--tidal-grid-line) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.58);
   background-size: 20px 20px;
 }
 
@@ -235,38 +237,38 @@
   width: fit-content;
   margin: var(--space-2) 0 var(--space-8);
   padding: var(--space-5) var(--space-9);
-  color: var(--raw-hex-9a5573);
-  border: 1px solid var(--raw-raw-rgba-184-95-130-0-2);
+  color: var(--text-soft);
+  border: 1px solid rgba(76, 99, 120, 0.2);
   border-radius: var(--radius-pill);
-  background: var(--raw-raw-rgba-255-229-240-0-64);
+  background: rgba(223, 229, 238, 0.64);
   font-size: 0.76rem;
 }
 
 .paper-piece {
   width: 100%;
-  min-height: 130px;
-  padding: var(--space-22);
+  min-height: 122px;
+  padding: var(--space-20);
   text-align: left;
   color: var(--ink);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   background:
-    linear-gradient(90deg, var(--raw-raw-rgba-184-95-130-0-08) 1px, transparent 1px),
-    var(--surface-white-52);
+    linear-gradient(90deg, var(--tidal-grid-line) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.52);
   background-size: 22px 22px;
-  box-shadow: 0 18px 34px var(--raw-raw-rgba-177-100-139-0-09);
+  box-shadow: 0 12px 28px rgba(74, 93, 108, 0.07);
   font: inherit;
 }
 
 button.paper-piece:hover {
-  border-color: var(--raw-raw-rgba-184-95-130-0-28);
+  border-color: rgba(76, 99, 120, 0.28);
   background:
-    linear-gradient(90deg, var(--raw-raw-rgba-184-95-130-0-1) 1px, transparent 1px),
-    var(--raw-raw-rgba-255-248-251-0-82);
+    linear-gradient(90deg, rgba(76, 99, 120, 0.1) 1px, transparent 1px),
+    rgba(247, 250, 252, 0.82);
 }
 
 button.paper-piece:focus-visible {
-  outline: 3px solid var(--raw-raw-rgba-214-126-161-0-22);
+  outline: 3px solid rgba(76, 99, 120, 0.22);
   outline-offset: 2px;
 }
 
@@ -274,7 +276,7 @@ button.paper-piece:focus-visible {
   display: block;
   margin: var(--space-14) 0 var(--space-10);
   font-family: var(--serif);
-  font-size: 1.28rem;
+  font-size: 1.16rem;
   font-weight: 500;
 }
 

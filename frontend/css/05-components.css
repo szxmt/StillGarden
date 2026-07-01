@@ -11,11 +11,11 @@ button {
   left: 50%;
   max-width: min(84%, 360px);
   padding: var(--space-9) var(--space-13);
-  color: var(--raw-hex-805d70);
+  color: var(--text-subtle);
   border: 1px solid var(--line-18);
   border-radius: var(--radius-pill);
-  background: var(--surface-white-82);
-  box-shadow: 0 16px 34px var(--shadow-rose-14);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 12px 28px rgba(74, 93, 108, 0.1);
   font-size: 0.76rem;
   line-height: 1.45;
   opacity: 0;
@@ -36,9 +36,9 @@ button {
 }
 
 .chat-toast.warning {
-  color: var(--text-rose);
-  border-color: var(--raw-raw-rgba-214-126-161-0-28);
-  background: var(--raw-raw-rgba-255-244-249-0-9);
+  color: var(--text-soft);
+  border-color: var(--line-18);
+  background: rgba(247, 250, 252, 0.92);
 }
 
 /* Switches */
@@ -49,7 +49,8 @@ button {
   align-items: center;
   padding: var(--space-2);
   border-radius: var(--radius-pill);
-  background: var(--line-14);
+  border: 1px solid rgba(120, 142, 165, 0.12);
+  background: rgba(120, 142, 165, 0.16);
   transition: background 180ms ease;
 }
 
@@ -58,8 +59,8 @@ button {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--surface-white-90);
-  box-shadow: 0 4px 10px var(--raw-raw-rgba-128-78-102-0-12);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 4px 10px rgba(74, 93, 108, 0.14);
   transition: transform 180ms ease;
 }
 
@@ -73,10 +74,12 @@ button {
 
 /* Cards and Subpages */
 .settings-card {
-  padding: var(--space-18);
+  padding: var(--space-16);
   border: 1px solid var(--line);
-  border-radius: var(--radius-2xl);
-  background: var(--raw-raw-rgba-255-255-255-0-54);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: 0 12px 30px rgba(74, 93, 108, 0.06);
+  backdrop-filter: blur(18px) saturate(1.16);
 }
 
 .subpage-menu {
@@ -85,7 +88,9 @@ button {
   overflow: hidden;
   border: 1px solid var(--line-14);
   border-radius: var(--radius-card);
-  background: var(--surface-white-44);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 30px rgba(74, 93, 108, 0.06);
+  backdrop-filter: blur(18px) saturate(1.12);
 }
 
 .subpage-entry {
@@ -93,7 +98,7 @@ button {
   display: grid;
   gap: var(--space-4);
   width: 100%;
-  padding: var(--space-16) var(--space-44) var(--space-16) var(--space-18);
+  padding: var(--space-14) var(--space-42) var(--space-14) var(--space-16);
   text-align: left;
   color: var(--ink);
   border: 0;
@@ -112,14 +117,14 @@ button {
   position: absolute;
   right: 18px;
   top: 50%;
-  color: var(--raw-hex-b48a9d);
+  color: var(--accent-soft);
   font-family: var(--font-serif-latin);
   font-size: 1.4rem;
   transform: translateY(-50%);
 }
 
 .subpage-entry:hover {
-  background: var(--raw-raw-rgba-255-244-249-0-68);
+  background: rgba(236, 238, 243, 0.52);
 }
 
 .subpage-entry.placeholder-entry {
@@ -145,15 +150,15 @@ button {
 .subpage-entry strong {
   color: var(--text-strong);
   font-family: var(--serif);
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   font-weight: 500;
 }
 
 .subpage-entry p {
   margin: var(--space-0);
   color: var(--text-muted-strong);
-  font-size: 0.86rem;
-  line-height: 1.65;
+  font-size: 0.82rem;
+  line-height: 1.55;
 }
 
 
@@ -176,12 +181,12 @@ button {
 .config-field select,
 .config-field input {
   width: 100%;
-  padding: var(--space-11) var(--space-13);
+  padding: var(--space-10) var(--space-12);
   color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   outline: none;
-  background: var(--surface-white-68);
+  background: var(--field-bg);
 }
 
 .config-field input[type="file"] {
@@ -197,7 +202,7 @@ button {
   color: white;
   border: 0;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  background: var(--send-bg);
   font: inherit;
   font-size: 0.78rem;
   cursor: pointer;
@@ -209,7 +214,7 @@ button {
   color: white;
   border: 0;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  background: var(--send-bg);
   font: inherit;
   font-size: 0.78rem;
   cursor: pointer;
@@ -228,7 +233,7 @@ button {
   color: var(--text-soft);
   border: 1px solid var(--line-18);
   border-radius: var(--radius-pill);
-  background: var(--surface-white-58);
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .config-save {
@@ -237,8 +242,8 @@ button {
   color: white;
   border: 0;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-  box-shadow: 0 14px 24px var(--line-accent-16);
+  background: var(--send-bg);
+  box-shadow: 0 12px 24px rgba(44, 64, 86, 0.16);
 }
 
 .config-status {
@@ -249,16 +254,16 @@ button {
 /* Status Rows */
 .status-line {
   display: flex;
-  min-height: 56px;
+  min-height: 52px;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-14);
   width: 100%;
-  padding: 0 var(--space-18);
+  padding: 0 var(--space-16);
   color: var(--ink);
-  border: 1px solid var(--raw-raw-rgba-182-117-145-0-15);
-  border-radius: var(--radius-xl);
-  background: var(--raw-raw-rgba-255-255-255-0-42);
+  border: 1px solid var(--line-14);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.46);
   font: inherit;
   text-align: left;
 }
@@ -279,7 +284,7 @@ button {
 }
 
 .status-line.is-on .switch-pill {
-  background: var(--raw-raw-rgba-214-126-161-0-72);
+  background: var(--accent);
 }
 
 .status-line.is-on .switch-pill i {

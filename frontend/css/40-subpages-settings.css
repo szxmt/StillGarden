@@ -32,7 +32,7 @@
   border: 0;
   border-radius: inherit;
   background:
-    linear-gradient(180deg, var(--surface-white-90), var(--raw-raw-rgba-255-246-250-0-76)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(247, 250, 252, 0.62)),
     var(--paper);
   box-shadow: none;
   scrollbar-width: none;
@@ -71,10 +71,10 @@
   min-height: 66px;
   align-items: center;
   gap: var(--space-10);
-  padding: var(--space-12) var(--space-16);
-  border-bottom: 1px solid var(--line-14);
-  background: var(--surface-white-72);
-  backdrop-filter: blur(18px);
+  padding: var(--space-10) var(--space-14);
+  border-bottom: 1px solid var(--line-12);
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(22px) saturate(1.16);
 }
 
 .subpage-back {
@@ -114,15 +114,15 @@
 
 .moment-subpage-appbar {
   border-bottom: 0;
-  background: linear-gradient(180deg, var(--raw-raw-rgba-125-75-98-0-18), var(--raw-raw-rgba-255-255-255-0));
+  background: linear-gradient(180deg, rgba(44, 64, 86, 0.12), rgba(255, 255, 255, 0));
   backdrop-filter: none;
   pointer-events: none;
 }
 
 .moment-subpage-appbar .subpage-back {
   color: var(--raw-hex-fff);
-  background: var(--raw-raw-rgba-110-65-88-0-18);
-  box-shadow: 0 10px 26px var(--raw-raw-rgba-127-73-101-0-12);
+  background: rgba(44, 64, 86, 0.18);
+  box-shadow: 0 10px 24px rgba(44, 64, 86, 0.12);
   backdrop-filter: blur(14px);
   pointer-events: auto;
 }
@@ -281,7 +281,7 @@
   padding: var(--space-18);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  background: var(--raw-raw-rgba-255-255-255-0-54);
+  background: var(--card-bg);
 }
 
 .wake-cardlet span,

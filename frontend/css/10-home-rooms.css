@@ -149,16 +149,16 @@
   padding: var(--space-10) var(--space-12);
   color: var(--raw-hex-6d5965);
   border: 1px solid var(--surface-white-82);
-  border-radius: var(--radius-xl);
-  background: var(--surface-white-58);
-  box-shadow: 0 10px 24px var(--raw-raw-rgba-169-93-130-0-1);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: 0 10px 24px rgba(74, 93, 108, 0.06);
   transition: transform 180ms ease, background 180ms ease;
 }
 
 .resident:hover,
 .resident.active {
   transform: translateY(-2px);
-  background: var(--raw-raw-rgba-255-244-249-0-94);
+  background: rgba(236, 238, 243, 0.64);
 }
 
 .avatar {
@@ -180,22 +180,22 @@
 
 .moon {
   color: var(--raw-hex-866575);
-  background: linear-gradient(135deg, var(--raw-hex-fff), var(--raw-hex-efd8e5));
+  background: linear-gradient(135deg, #fff, #dfe7ee);
 }
 
 .sun {
   color: var(--raw-hex-9e6682);
-  background: linear-gradient(135deg, var(--raw-hex-fff)1d8, var(--raw-hex-ffe1ec));
+  background: linear-gradient(135deg, #f5f2ea, #e7edf2);
 }
 
 .terminal {
   color: var(--raw-hex-6f637d);
-  background: linear-gradient(135deg, var(--raw-hex-f5f1ff), var(--raw-hex-ffe9f3));
+  background: linear-gradient(135deg, #f2f5f7, #edf2f6);
 }
 
 .living {
   color: var(--raw-hex-7b6d54);
-  background: linear-gradient(135deg, var(--raw-hex-fff)7df, var(--raw-hex-fff)0f5);
+  background: linear-gradient(135deg, #f5f2ea, #f6f8fa);
 }
 
 .home-center {
@@ -204,8 +204,8 @@
   padding: var(--space-34) var(--space-26);
   text-align: center;
   border: 1px solid var(--line);
-  border-radius: var(--radius-30);
-  background: var(--surface-white-46);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.46);
 }
 
 .home-center h2 {
@@ -377,8 +377,8 @@
 .room-actions .room-chat-button {
   color: white;
   border: 0;
-  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-  box-shadow: 0 16px 28px var(--raw-raw-rgba-184-95-130-0-22);
+  background: var(--send-bg);
+  box-shadow: 0 12px 24px rgba(44, 64, 86, 0.16);
 }
 
 .room-actions .context-button {
