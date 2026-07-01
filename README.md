@@ -1,6 +1,6 @@
 # Lunette
 
-Lunatte / 月亮小窝是 Stillgarden 的 V0.2 独立工作区。当前仓库包含：
+Lunatte / 月亮小窝是 Stillgarden 清理重组后的 V0.3 当前工作区。当前仓库包含：
 
 - 前端：`frontend/`
 - 后端：`backend/`
@@ -11,6 +11,7 @@ Lunatte / 月亮小窝是 Stillgarden 的 V0.2 独立工作区。当前仓库包
 ## 先看哪里
 
 - 当前状态：`docs/current-status.md`
+- 全局总蓝图：`docs/全局总蓝图.md`
 - 下一步计划：`docs/roadmap.md`
 - 写入规则：`docs/engineering-rules.md`
 - 当前架构：`docs/architecture.md`
@@ -38,7 +39,7 @@ start-lunatte.bat
 
 ## 数据安全
 
-当前开发只写 V0.2 自己的数据副本：
+当前开发只写 V0.3 自己的数据副本：
 
 ```text
 D:\Aaa.项目\lunatte\v0.3\data\sessions\prototype
@@ -62,4 +63,4 @@ D:\A月亮啊\memory-vault-starter\sessions\prototype
 
 ## 当前阶段
 
-V0.2 正在做隐私治理后的结构重组。完成验证和提交后，下一步按 `docs/roadmap.md` 恢复功能设计：UI 试点、记忆事件模型、Archive 审计、SQLite/FTS5 草图和真 App 技术路线验证。
+V0.3 的安全清理、目录地基和前后端拆分已经落地。后续按 `docs/全局总蓝图.md` 看全局方向，按 `docs/roadmap.md` 执行短期任务。

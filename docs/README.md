@@ -1,10 +1,11 @@
 # Lunette 文档索引
 
-本目录是 V0.2 之后的唯一项目文档入口。后续不要继续把计划、规则和状态散落到根目录。
+本目录是 V0.3 之后的唯一项目文档入口。后续不要继续把计划、规则和状态散落到根目录。
 
 ## 当前真源
 
 - `current-status.md`：当前真实状态，先看这个。
+- `全局总蓝图.md`：全局状态板、已做/半成品/未做和总路线。
 - `roadmap.md`：下一步做什么、暂缓什么。
 - `engineering-rules.md`：写代码前必须遵守的写入规则。
 - `architecture.md`：当前前后端和数据层结构。
@@ -28,6 +29,7 @@
 新增文档前先判断：
 
 - 当前状态变化：改 `current-status.md`。
+- 全局方向变化：改 `全局总蓝图.md`。
 - 工程边界变化：改 `engineering-rules.md` 或 `architecture.md`。
 - 下一步顺序变化：改 `roadmap.md`。
 - UI 审美或组件原则：改 `ui-direction.md`。
