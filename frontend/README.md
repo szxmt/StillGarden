@@ -5,7 +5,7 @@
 ## 启动
 
 ```powershell
-cd D:\Aaa.项目\lunatte
+cd D:\Aaa.项目\lunatte\v0.3
 .\start-lunatte.ps1
 ```
 
@@ -18,7 +18,7 @@ start-lunatte.bat
 默认端口：`8877`。服务会读取和写入：
 
 ```text
-D:\Aaa.项目\lunatte\data\sessions\prototype
+D:\Aaa.项目\lunatte\v0.3\data\sessions\prototype
 ```
 
 ## 当前可用页面

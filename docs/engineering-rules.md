@@ -73,7 +73,7 @@ python -m py_compile backend\server.py backend\server_config.py backend\server_s
 短启动 8877 后必须确认：
 
 - `/api/health` 返回 200。
-- `sessions` 指向 `D:\Aaa.项目\lunatte\data\sessions\prototype`。
+- `sessions` 指向 `D:\Aaa.项目\lunatte\v0.3\data\sessions\prototype`。
 
 写入型测试产生的 `data/sessions/prototype` diff 默认不提交。
 

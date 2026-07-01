@@ -241,7 +241,7 @@ aimas-hermes-integration-v0.1.md
 - Chat 切换 session 后会从浏览器草稿和文件草稿合并恢复最近消息。
 - Chat 页已新增本地服务状态灯：能区分“已连接 D 盘服务”和“静态预览/仅浏览器草稿”。
 - `start-lunatte.bat` 已改成由服务启动后自动打开正确网址；默认改用 `8877`，避开旧 `8765` 服务。
-- 当前运行目录已统一为 `D:\Aaa.项目\lunatte`；启动脚本在项目根目录，前端为 `frontend`，后端为 `backend`，`/api/health` 指向 `D:\Aaa.项目\lunatte\data\sessions\prototype`。
+- 当前运行目录已统一为 `D:\Aaa.项目\lunatte\v0.3`；启动脚本在项目根目录，前端为 `frontend`，后端为 `backend`，`/api/health` 指向 `D:\Aaa.项目\lunatte\v0.3\data\sessions\prototype`。
 - CSS 第一轮拆分已完成：`styles.css` 作为入口，实际样式进入 `frontend/css/` 的 token、foundation、页面和组件模块。
 - JS 第一轮拆分已完成：`script.js` 作为 Web DOM 入口，通用配置、请求、状态读写、格式化和纯数据 helper 进入 `shared/lunatte-core.js`。
 - 后端第一轮拆分已完成：`server.py` 作为 HTTP 入口，路径/默认配置进入 `server_config.py`，JSON/JSONL、secrets、profile assets、prototype assets 存储 helper 进入 `server_storage.py`。

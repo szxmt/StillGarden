@@ -24,7 +24,7 @@ Lunatte / 月亮小窝是 Stillgarden 的 V0.2 独立工作区。当前仓库包
 ## 启动原型
 
 ```powershell
-cd D:\Aaa.项目\lunatte
+cd D:\Aaa.项目\lunatte\v0.3
 .\start-lunatte.ps1
 ```
 
@@ -41,7 +41,7 @@ start-lunatte.bat
 当前开发只写 V0.2 自己的数据副本：
 
 ```text
-D:\Aaa.项目\lunatte\data\sessions\prototype
+D:\Aaa.项目\lunatte\v0.3\data\sessions\prototype
 ```
 
 不要直接写旧 V0.1：

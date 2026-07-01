@@ -4,7 +4,7 @@
 
 ## 项目位置
 
-- 工作区：`D:\Aaa.项目\lunatte`
+- 工作区：`D:\Aaa.项目\lunatte\v0.3`
 - 前端：`frontend`
 - 后端：`backend`
 - 本地私有记忆材料：`memory/`
