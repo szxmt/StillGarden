@@ -4,7 +4,7 @@
 
 - 根目录只保留一个 `README.md`。
 - 当前真源文档放在 `docs/`。
-- 旧 v0.1 记忆索引类文档单独放进 `docs/memory-index/legacy-v0.1/`。
+- 旧 v0.1 记忆索引类文档单独放进 `docs/archive/memory-index-legacy-v0.1/`。
 - 旧项目计划和审计报告进入 `docs/archive/`。
 - Antigravity 原文只作为归档参考，不当源码和当前真源。
 - UI 模板只吸收原则，不直接合并源码。

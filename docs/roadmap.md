@@ -11,7 +11,7 @@
 - 新建核心文档。
 - 提取旧文档有效信息。
 - 归档旧 v0.1 计划和 V0.2 审计记录。
-- 把记忆库操作说明单独放进 `docs/memory-index/`。
+- 把旧记忆库操作说明归档到 `docs/archive/memory-index-legacy-v0.1/`。
 - 根 README 改成唯一入口。
 
 ## P1：UI 方向试点
